@@ -2,7 +2,15 @@ package pl.edu.amu.wmi.customer.UI;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import pl.edu.amu.wmi.common.UI.UIInterface;
+import pl.edu.amu.wmi.common.cryptography.RSA;
+import pl.edu.amu.wmi.common.protocols.blindSignature.RsaBlind;
 
 public class UI implements UIInterface {
 
@@ -16,7 +24,7 @@ public class UI implements UIInterface {
         System.out.println("---| Customer Module Application |---");
         System.out.println("---| Module Allice               |---");
         System.out.println("---| --------------------------- |---");
-        System.out.println("---| Enter "+GENERATE_BILL+" to generate bills   |---");
+        System.out.println("---| Enter " + GENERATE_BILL + " to generate bills   |---");
         System.out.println("---| Enter " + EXIT + " to quit      |---");
     }
 
@@ -32,8 +40,9 @@ public class UI implements UIInterface {
                 line = bufferedReader.readLine();
 
                 switch (line) {
-                    case GENERATE_BILL:{
+                    case GENERATE_BILL: {
                         System.out.println("Active module bills creator");
+//                        RSATesting();
                         break;
                     }
                     case EXIT: {
@@ -52,6 +61,23 @@ public class UI implements UIInterface {
 
         }
     }
+//RSABlind testing method
+    private void RSATesting() {
+        RSA rsa = new RSA();
+        RsaBlind blind;
+        try {
+            rsa.GeneratePairKey();
+            blind = new RsaBlind(rsa);
+            BigInteger blindMessage = blind.blind("ass");
+            BigInteger blindSign  = blind.sign(blindMessage);
+            BigInteger blindUnblind = blind.unblind(blindSign);
+            blind.verify("ass", blindUnblind);
+            
+        } catch (NoSuchAlgorithmException | NoSuchProviderException | UnsupportedEncodingException ex) {
+            Logger.getLogger(UI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+//CLEAR CONSOLE: AT THIS MOMENT DONT WORK IN NETBEANS PROPABLY WORK IN CONSOLE
 
     private static void clearConsole() {
         try {

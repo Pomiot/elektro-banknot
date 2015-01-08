@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import pl.edu.amu.wmi.common.UI.UIInterface;
 import pl.edu.amu.wmi.common.cryptography.RSA;
 import pl.edu.amu.wmi.common.protocols.blindSignature.RsaBlind;
+import pl.edu.amu.wmi.common.protocols.secretSharing.secretSharing;
 
 public class UI implements UIInterface {
 
@@ -43,6 +44,7 @@ public class UI implements UIInterface {
                     case GENERATE_BILL: {
                         System.out.println("Active module bills creator");
 //                        RSATesting();
+                        SecretTest();
                         break;
                     }
                     case EXIT: {
@@ -62,6 +64,14 @@ public class UI implements UIInterface {
         }
     }
 //RSABlind testing method
+    private void SecretTest(){
+        try {
+            secretSharing secret = new secretSharing("DUPA");
+            secret.generateSecretSharing();
+        } catch (UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchProviderException ex) {
+            Logger.getLogger(UI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     private void RSATesting() {
         RSA rsa = new RSA();
         RsaBlind blind;

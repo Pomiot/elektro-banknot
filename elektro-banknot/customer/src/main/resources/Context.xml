@@ -13,15 +13,21 @@
         <property name="connectionFactory" ref="connectionFactory"/>
     </bean>
 
-    <bean id="analysisQueue" class="org.apache.activemq.command.ActiveMQQueue">
-        <constructor-arg value="analysisQueue"/>
+    <bean id="cashGenerationQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="cashGenerationQueue"/>
     </bean>
 
-    <bean id="analysisService" class="pl.edu.amu.dji.jms.lab4.analysis.service.AnalysisService"/>
+    <bean id="customerCashGenerationService" class="pl.edu.amu.wmi.customer.services.CustomerCashGenerationService">
+        <property name="jmsTemplate" ref="jmsTemplate"/>
+        <property name="cashGenerationQueue" ref="cashGenerationQueue"/>
+    </bean>
 
+
+    <!--
     <bean id="messageListenerContainer" class="org.springframework.jms.listener.SimpleMessageListenerContainer">
-        <property name="messageListener" ref="analysisService"/>
+        <property name="messageListener" ref="customerCashGenerationService"/>
         <property name="connectionFactory" ref="connectionFactory"/>
-        <property name="destination" ref="analysisQueue"/>
+        <property name="destination" ref="cashGenerationQueue"/>
     </bean>
+    -->
 </beans>

@@ -9,8 +9,10 @@ package pl.edu.amu.wmi.shop;
  *
  * @author Patryk
  */
-public class shop {
+public class Shop {
     public static void main(String[] args) {
+         ApplicationContext context = new ClassPathXmlApplicationContext("Context.xml");
+        
         
     }
 }

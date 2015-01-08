@@ -9,8 +9,9 @@ package pl.edu.amu.wmi.bank;
  *
  * @author Patryk
  */
-public class bank {
-    public static void main(String[] args) {
+public class Bank {
+public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext("Context.xml");
         
     }
 }

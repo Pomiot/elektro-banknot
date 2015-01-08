@@ -5,6 +5,9 @@
  */
 package pl.edu.amu.wmi.shop;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 /**
  *
  * @author Patryk

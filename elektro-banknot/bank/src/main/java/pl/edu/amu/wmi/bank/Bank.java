@@ -5,10 +5,13 @@
  */
 package pl.edu.amu.wmi.bank;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 /**
  *
  * @author Patryk
- */
+ **/
 public class Bank {
 public static void main(String[] args) {
         ApplicationContext context = new ClassPathXmlApplicationContext("Context.xml");

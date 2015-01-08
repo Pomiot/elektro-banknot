@@ -1,5 +1,7 @@
 package pl.edu.amu.wmi.customer;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import pl.edu.amu.wmi.customer.UI.UI;
 
 public class Customer {

@@ -17,17 +17,25 @@
         <constructor-arg value="cashGenerationQueue"/>
     </bean>
 
+    <bean id="cashReceptionQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="cashReceptionQueue"/>
+    </bean>
+
+    <bean id="cashReceptionService" class="pl.edu.amu.wmi.customer.services.CashReceptionService">
+        <property name="jmsTemplate" ref="jmsTemplate"/>
+        <property name="cashReceptionQueue" ref="cashReceptionQueue"/>
+    </bean>
+
     <bean id="customerCashGenerationService" class="pl.edu.amu.wmi.customer.services.CustomerCashGenerationService">
         <property name="jmsTemplate" ref="jmsTemplate"/>
         <property name="cashGenerationQueue" ref="cashGenerationQueue"/>
+        <property name="cashReceptionQueue" ref="cashReceptionQueue"/>
     </bean>
 
-
-    <!--
     <bean id="messageListenerContainer" class="org.springframework.jms.listener.SimpleMessageListenerContainer">
-        <property name="messageListener" ref="customerCashGenerationService"/>
+        <property name="messageListener" ref="cashReceptionService"/>
         <property name="connectionFactory" ref="connectionFactory"/>
-        <property name="destination" ref="cashGenerationQueue"/>
+        <property name="destination" ref="cashReceptionQueue"/>
     </bean>
-    -->
+
 </beans>

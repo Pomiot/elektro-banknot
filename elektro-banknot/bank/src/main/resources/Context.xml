@@ -17,7 +17,10 @@
         <constructor-arg value="cashGenerationQueue"/>
     </bean>
 
-    <bean id="cashGenereationService" class="pl.edu.amu.wmi.bank.services.CashGenerationService"/>
+    <bean id="cashGenereationService" class="pl.edu.amu.wmi.bank.services.CashGenerationService">
+        <property name="jmsTemplate" ref="jmsTemplate"/>
+        <property name="cashGenerationQueue" ref="cashGenerationQueue"/>
+    </bean>
 
     <bean id="messageListenerContainer" class="org.springframework.jms.listener.SimpleMessageListenerContainer">
         <property name="messageListener" ref="cashGenereationService"/>

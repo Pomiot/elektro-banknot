@@ -34,8 +34,8 @@ public class PurchaseService implements MessageListener {
         ObjectMessage objectMessage = (ObjectMessage) message;
 
         try {
-            if(objectMessage.getObject() instanceof Banknote)
-            System.out.println("Sklep: otrzymałem wiadomość. Klient chce zakupić " + objectMessage.getStringProperty("item"));
+            if(objectMessage.getObject() instanceof Banknote){
+            System.out.println("Sklep: otrzymałem wiadomość. Klient na kolejce " + objectMessage.getJMSReplyTo() + " chce zakupić " + objectMessage.getStringProperty("item"));
 
             jmsTemplate.send(objectMessage.getJMSReplyTo(), new MessageCreator() {
                 @Override
@@ -50,8 +50,8 @@ public class PurchaseService implements MessageListener {
                     System.out.println("Sklep: wysyłam do klienta żądanie otrzymania informacji identyfikującej");
 
                     return replyMessage;
-                }
-            });
+            }
+            });}
 
             if (objectMessage.getObject() instanceof ShopIdentificationInfoResponse) {
                 System.out.println("Sklep: otrzymałem od klienta informacje identyfikujące");

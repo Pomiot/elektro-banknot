@@ -1,5 +1,8 @@
 package pl.edu.amu.wmi.common.objects;
-
+/**
+ * zestaw zaciemnionych banknotów, które ma otrzymać bank.
+ * 
+ */
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

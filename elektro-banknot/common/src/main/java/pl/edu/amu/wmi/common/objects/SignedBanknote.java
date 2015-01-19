@@ -1,5 +1,7 @@
 package pl.edu.amu.wmi.common.objects;
-
+/**
+ *  podpisany w ciemno banknot od banku dla Alice.
+ */
 import java.io.Serializable;
 
 /**

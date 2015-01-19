@@ -1,5 +1,6 @@
 package pl.edu.amu.wmi.customer.services;
 
+import java.util.Arrays;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import pl.edu.amu.wmi.common.objects.Banknote;
@@ -37,7 +38,10 @@ public class PurchaseFromShopService {
                 ObjectMessage message = session.createObjectMessage();
 
                 message.setStringProperty("item", "fortepian");
-                message.setObject(new Banknote("1000"));
+                //Tymczasowa modyfikacja do testów
+                Banknote banknot = new Banknote("1000");
+                System.out.println("Id money: "+Arrays.toString(banknot.getUniquenessString()));
+                message.setObject(banknot);
                 message.setJMSReplyTo(identificationSendingQueue);
 
                 System.out.println("Klient: wysyłam do sklepu polecenie dokonania zakupu oraz banknot");

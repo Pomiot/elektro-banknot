@@ -1,5 +1,8 @@
 package pl.edu.amu.wmi.common.Util;
 
+import java.security.SecureRandom;
+import java.util.Random;
+
 public class util {
 
     private final static char[] hexChars = {
@@ -24,5 +27,12 @@ public class util {
                     + Character.digit(s.charAt(i + 1), 16));
         }
         return data;
+    }
+    //Metoda generująca random określonej długości
+    public static byte[] generateSecureRandom(int size){
+        Random random = new SecureRandom();
+        byte[] aesKey = new byte[size];
+        random.nextBytes(aesKey);
+        return aesKey;       
     }
 }

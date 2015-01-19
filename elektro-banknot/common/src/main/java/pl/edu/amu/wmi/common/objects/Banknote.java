@@ -1,30 +1,39 @@
 package pl.edu.amu.wmi.common.objects;
-
-import java.io.Serializable;
-
 /**
-  * Created by Tomasz on 2015-01-15.
-  **/
-
+Klasa stanawiąca banknot
+amount - kwota banknotu
+uniquenessString - identyfikator banknotu
+* identyfikator jest byte[] wynika to  tego ze SecureRandom działa na tym
+**/
+import java.io.Serializable;
+import pl.edu.amu.wmi.common.Util.util;
+/**
+ * Created by Tomasz on 2015-01-15.
+ * Modification by Patryk on 2015-01-19
+  *
+ */
 public class Banknote implements Serializable {
+    private String amount;
+    private byte[] uniquenessString;
 
-    private String value;
-
-    private String uniquenessString;
-
-    public Banknote(String value) {
-
-
-
-        this.value = value;
+    public Banknote(String amount) {
+        this.amount = amount;
+        this.generateUniquenessString();
     }
 
-    public String getValue() {
-
-        return value;
+    public String getAmount() {
+        return amount;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setAmount(String value) {
+        this.amount = value;
+    }
+
+    public byte[] getUniquenessString() {
+        return uniquenessString;
+    }
+    //Generuje identyfikator banknotu
+    private void generateUniquenessString(){
+        this.uniquenessString = util.generateSecureRandom(16);
     }
 }

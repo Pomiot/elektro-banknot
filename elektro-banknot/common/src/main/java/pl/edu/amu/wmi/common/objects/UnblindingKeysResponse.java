@@ -1,5 +1,7 @@
 package pl.edu.amu.wmi.common.objects;
-
+/**
+ * klucze, które Alice wysyła do banku.
+ */
 import java.io.Serializable;
 
 /**

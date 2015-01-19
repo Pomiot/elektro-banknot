@@ -13,21 +13,62 @@
         <property name="connectionFactory" ref="connectionFactory"/>
     </bean>
 
+    <!-- komunikacja KLIENT - BANK -->
+
     <bean id="cashGenerationQueue" class="org.apache.activemq.command.ActiveMQQueue">
         <constructor-arg value="cashGenerationQueue"/>
+    </bean>
+
+    <bean id="cashReceptionQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="cashReceptionQueue"/>
+    </bean>
+
+    <bean id="cashReceptionService" class="pl.edu.amu.wmi.customer.services.CashReceptionService">
+        <property name="jmsTemplate" ref="jmsTemplate"/>
+        <property name="cashReceptionQueue" ref="cashReceptionQueue"/>
     </bean>
 
     <bean id="customerCashGenerationService" class="pl.edu.amu.wmi.customer.services.CustomerCashGenerationService">
         <property name="jmsTemplate" ref="jmsTemplate"/>
         <property name="cashGenerationQueue" ref="cashGenerationQueue"/>
+        <property name="cashReceptionQueue" ref="cashReceptionQueue"/>
     </bean>
 
-
-    <!--
     <bean id="messageListenerContainer" class="org.springframework.jms.listener.SimpleMessageListenerContainer">
-        <property name="messageListener" ref="customerCashGenerationService"/>
+        <property name="messageListener" ref="cashReceptionService"/>
         <property name="connectionFactory" ref="connectionFactory"/>
-        <property name="destination" ref="cashGenerationQueue"/>
+        <property name="destination" ref="cashReceptionQueue"/>
     </bean>
-    -->
+
+    <!-- komunikacja KLIENT - SKLEP -->
+
+    <bean id="purchaseQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="purchaseQueue"/>
+    </bean>
+
+    <bean id="identificationSendingQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="identificationSendingQueue"/>
+    </bean>
+
+    <bean id="sendIdentificationService" class="pl.edu.amu.wmi.customer.services.SendIdentificationService">
+        <property name="jmsTemplate" ref="jmsTemplate"/>
+    </bean>
+
+    <bean id="messageListenerContainer2" class="org.springframework.jms.listener.SimpleMessageListenerContainer">
+        <property name="messageListener" ref="sendIdentificationService"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="destination" ref="identificationSendingQueue"/>
+    </bean>
+
+    <bean id="purchaseFromShopService" class="pl.edu.amu.wmi.customer.services.PurchaseFromShopService">
+        <property name="jmsTemplate" ref="jmsTemplate"/>
+        <property name="purchaseQueue" ref="purchaseQueue"/>
+        <property name="identificationSendingQueue" ref="identificationSendingQueue"/>
+    </bean>
+
+
+
+
+
+
 </beans>

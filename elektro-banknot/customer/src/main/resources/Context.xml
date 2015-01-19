@@ -46,10 +46,28 @@
         <constructor-arg value="purchaseQueue"/>
     </bean>
 
+    <bean id="identificationSendingQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="identificationSendingQueue"/>
+    </bean>
+
+    <bean id="sendIdentificationService" class="pl.edu.amu.wmi.customer.services.SendIdentificationService">
+        <property name="jmsTemplate" ref="jmsTemplate"/>
+    </bean>
+
+    <bean id="messageListenerContainer2" class="org.springframework.jms.listener.SimpleMessageListenerContainer">
+        <property name="messageListener" ref="sendIdentificationService"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="destination" ref="identificationSendingQueue"/>
+    </bean>
+
     <bean id="purchaseFromShopService" class="pl.edu.amu.wmi.customer.services.PurchaseFromShopService">
         <property name="jmsTemplate" ref="jmsTemplate"/>
         <property name="purchaseQueue" ref="purchaseQueue"/>
+        <property name="identificationSendingQueue" ref="identificationSendingQueue"/>
     </bean>
+
+
+
 
 
 

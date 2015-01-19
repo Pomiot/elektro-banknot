@@ -5,5 +5,5 @@ import java.io.Serializable;
 /**
  * Created by Tomasz on 2015-01-18.
  */
-public class UnblindingKeysArray implements Serializable {
+public class UnblindingKeysResponse implements Serializable {
 }

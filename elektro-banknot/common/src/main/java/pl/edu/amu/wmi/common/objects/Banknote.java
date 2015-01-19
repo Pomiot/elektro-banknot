@@ -10,7 +10,12 @@ public class Banknote implements Serializable {
 
     private String value;
 
+    private String uniquenessString;
+
     public Banknote(String value) {
+
+
+
         this.value = value;
     }
 

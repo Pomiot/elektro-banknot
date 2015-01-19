@@ -5,7 +5,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import pl.edu.amu.wmi.common.objects.BanknotesToGeneration;
 import pl.edu.amu.wmi.common.objects.SignedBanknote;
-import pl.edu.amu.wmi.common.objects.UnblindingKeysArray;
+import pl.edu.amu.wmi.common.objects.UnblindingKeysResponse;
 import pl.edu.amu.wmi.common.objects.UnblindingKeysRequest;
 
 import javax.jms.*;
@@ -64,7 +64,7 @@ public class CashGenerationService implements MessageListener {
                 });
             }
 
-            if(objectMessage.getObject() instanceof UnblindingKeysArray){
+            if(objectMessage.getObject() instanceof UnblindingKeysResponse){
 
                 /**
                  * Tutaj będzie odbywać się magia jak już bank dostanie listę kluczy do banknotów.
@@ -74,7 +74,7 @@ public class CashGenerationService implements MessageListener {
                  *
                  */
 
-                UnblindingKeysArray unblindingKeysArray = (UnblindingKeysArray) objectMessage.getObject();
+                UnblindingKeysResponse unblindingKeysResponse = (UnblindingKeysResponse) objectMessage.getObject();
 
                 System.out.println("Bank: otrzymałem od klienta zestaw kluczy.");
 

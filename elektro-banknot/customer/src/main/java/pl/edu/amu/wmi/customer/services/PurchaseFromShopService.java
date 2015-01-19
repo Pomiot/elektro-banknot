@@ -15,6 +15,12 @@ public class PurchaseFromShopService {
 
     Destination purchaseQueue;
 
+    Destination identificationSendingQueue;
+
+    public void setIdentificationSendingQueue(Destination identificationSendingQueue) {
+        this.identificationSendingQueue = identificationSendingQueue;
+    }
+
     public void setJmsTemplate(JmsTemplate jmsTemplate) {
         this.jmsTemplate = jmsTemplate;
     }
@@ -32,6 +38,7 @@ public class PurchaseFromShopService {
 
                 message.setStringProperty("item", "fortepian");
                 message.setObject(new Banknote("1000"));
+                message.setJMSReplyTo(identificationSendingQueue);
 
                 System.out.println("Klient: wysyłam do sklepu polecenie dokonania zakupu oraz banknot");
 

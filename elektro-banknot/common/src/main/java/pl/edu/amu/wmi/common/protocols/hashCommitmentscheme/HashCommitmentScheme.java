@@ -29,7 +29,10 @@ public class HashCommitmentScheme {
     public byte[] getHash() {
         return hash;
     }
-    
+
+    public byte[] getRandom2() {
+        return random2;
+    }
     
     //Konstruktor do tworzenia zobowiazania
     public HashCommitmentScheme(byte[] bytesDecision) {

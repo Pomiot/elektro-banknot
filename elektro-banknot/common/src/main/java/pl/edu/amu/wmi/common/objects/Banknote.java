@@ -29,33 +29,23 @@ public class Banknote implements Serializable {
     private byte[] uniquenessString;
 
     //pola tymczasowe chyba
-    private byte[] leftIdBanknoteFromIdCustomer;
-    private List<byte[]> leftIdBanknoteFromIdCustomerList = new ArrayList<>();
-    private byte[] rightIdBanknoteFromIdCustomer;
-    private List<byte[]> rightIdBanknoteFromIdCustomerList = new ArrayList<>();
+    private final List<byte[]> leftIdBanknoteFromIdCustomerList = new ArrayList<>();
+    private final List<byte[]> rightIdBanknoteFromIdCustomerList = new ArrayList<>();
 
-    private byte[] leftIdBanknoteFromIdCustomerRandom1;
-    private List<byte[]> leftIdBanknoteFromIdCustomerRandom1List = new ArrayList<>();
-    private byte[] leftIdBanknoteFromIdCustomerRandom2;
-    private List<byte[]> leftIdBanknoteFromIdCustomerRandom2List = new ArrayList<>();
-    private byte[] leftIdBanknoteFromIdCustomerHash;
-    private List<byte[]> leftIdBanknoteFromIdCustomerHashList = new ArrayList<>();
+    private final List<byte[]> leftIdBanknoteFromIdCustomerRandom1List = new ArrayList<>();
+    private final List<byte[]> leftIdBanknoteFromIdCustomerRandom2List = new ArrayList<>();
+    private final List<byte[]> leftIdBanknoteFromIdCustomerHashList = new ArrayList<>();
 
-    private byte[] rightIdBanknoteFromIdCustomerRandom1;
-    private List<byte[]> rightIdBanknoteFromIdCustomerRandom1List = new ArrayList<>();
-    private byte[] rightIdBanknoteFromIdCustomerRandom2;
-    private List<byte[]> rightIdBanknoteFromIdCustomerRandom2List = new ArrayList<>();
-    private byte[] rightIdBanknoteFromIdCustomerHash;
-    private List<byte[]> rightIdBanknoteFromIdCustomerHashList = new ArrayList<>();
+    private final List<byte[]> rightIdBanknoteFromIdCustomerRandom1List = new ArrayList<>();
+    private final List<byte[]> rightIdBanknoteFromIdCustomerRandom2List = new ArrayList<>();
+    private final List<byte[]> rightIdBanknoteFromIdCustomerHashList = new ArrayList<>();
 
     public Banknote(String amount, byte[] customerId) {
         this.amount = amount;
         this.generateUniquenessString();
         System.out.println(">---Customer ID: " + Arrays.toString(customerId));
         this.generateCustomerIdInBanknote(customerId);
-//        this.generateHashCommitmentCustomerIdInBanknote();
-        //this.showAll();
-        this.showLeftIdBanknoteFromIdCustomer();
+        this.showAll();
     }
 
     public String getAmount() {
@@ -85,50 +75,108 @@ public class Banknote implements Serializable {
                 secretId.generateSecretSharing();
                 this.leftIdBanknoteFromIdCustomerList.add(secretId.getRandom1());
                 this.rightIdBanknoteFromIdCustomerList.add(secretId.getResult());
+                this.generateHashCommitmentCustomerIdInBanknote(secretId.getRandom1(), secretId.getResult());
             } catch (UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchProviderException ex) {
                 Logger.getLogger(Banknote.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
     }
 
-    private void generateHashCommitmentCustomerIdInBanknote() {
+    private void generateHashCommitmentCustomerIdInBanknote(byte[] left, byte[] right) {
         //Generowanie zobowiazania do lewej strony
         HashCommitmentScheme leftIdBanknoteFromIdCustomerCommitmentScheme
-                = new HashCommitmentScheme(this.leftIdBanknoteFromIdCustomer);
-        this.leftIdBanknoteFromIdCustomerRandom1
-                = leftIdBanknoteFromIdCustomerCommitmentScheme.getRandom1();
-        this.leftIdBanknoteFromIdCustomerRandom2
-                = leftIdBanknoteFromIdCustomerCommitmentScheme.getRandom2();
-        this.leftIdBanknoteFromIdCustomerHash
-                = leftIdBanknoteFromIdCustomerCommitmentScheme.getHash();
+                = new HashCommitmentScheme(left);
+        this.leftIdBanknoteFromIdCustomerRandom1List.add(
+                leftIdBanknoteFromIdCustomerCommitmentScheme.getRandom1());
+        this.leftIdBanknoteFromIdCustomerRandom2List.add(
+                leftIdBanknoteFromIdCustomerCommitmentScheme.getRandom2());
+        this.leftIdBanknoteFromIdCustomerHashList.add(
+                leftIdBanknoteFromIdCustomerCommitmentScheme.getHash());
         //Generowanie zoobowiazania do prawej strony
         HashCommitmentScheme rightIdBanknoteFromIdCustomerCommitmentScheme
-                = new HashCommitmentScheme(this.rightIdBanknoteFromIdCustomer);
-        this.rightIdBanknoteFromIdCustomerRandom1
-                = rightIdBanknoteFromIdCustomerCommitmentScheme.getRandom1();
-        this.rightIdBanknoteFromIdCustomerRandom2
-                = rightIdBanknoteFromIdCustomerCommitmentScheme.getRandom2();
-        this.rightIdBanknoteFromIdCustomerHash
-                = rightIdBanknoteFromIdCustomerCommitmentScheme.getHash();
+                = new HashCommitmentScheme(right);
+        this.rightIdBanknoteFromIdCustomerRandom1List.add(
+                rightIdBanknoteFromIdCustomerCommitmentScheme.getRandom1());
+        this.rightIdBanknoteFromIdCustomerRandom2List.add(
+                rightIdBanknoteFromIdCustomerCommitmentScheme.getRandom2());
+        this.rightIdBanknoteFromIdCustomerHashList.add(
+                rightIdBanknoteFromIdCustomerCommitmentScheme.getHash());
     }
 
     private void showAll() {
-        System.out.println("leftIdBanknoteFromIdCustomer: " + Arrays.toString(this.leftIdBanknoteFromIdCustomer));
-        System.out.println("rightIdBanknoteFromIdCustomer: " + Arrays.toString(this.rightIdBanknoteFromIdCustomer));
-        System.out.println("leftIdBanknoteFromIdCustomerRandom1: " + Arrays.toString(this.leftIdBanknoteFromIdCustomerRandom1));
-        System.out.println("leftIdBanknoteFromIdCustomerRandom2: " + Arrays.toString(this.leftIdBanknoteFromIdCustomerRandom2));
-        System.out.println("leftIdBanknoteFromIdCustomerHash: " + Arrays.toString(this.leftIdBanknoteFromIdCustomerHash));
-        System.out.println("rightIdBanknoteFromIdCustomerRandom1: " + Arrays.toString(this.rightIdBanknoteFromIdCustomerRandom1));
-        System.out.println("rightIdBanknoteFromIdCustomerRandom2: " + Arrays.toString(this.rightIdBanknoteFromIdCustomerRandom2));
-        System.out.println("rightIdBanknoteFromIdCustomerHash: " + Arrays.toString(this.rightIdBanknoteFromIdCustomerHash));
+        this.showLeftIdBanknoteFromIdCustomer();
+        this.showRightIdBanknoteFromIdCustomer();
+        this.showLeftIdBanknoteFromIdCustomerRandom1();
+        this.showLeftIdBanknoteFromIdCustomerRandom2();
+        this.showLeftIdBanknoteFromIdCustomerHash();
+        this.showRightIdBanknoteFromIdCustomerRandom1();
+        this.showRightIdBanknoteFromIdCustomerRandom2();
+        this.showRightIdBanknoteFromIdCustomerHash();
     }
 
     private void showLeftIdBanknoteFromIdCustomer() {
-        int i=0;
+        int i = 0;
         for (byte[] b : this.leftIdBanknoteFromIdCustomerList) {
             i++;
-            System.out.println(i+" leftIdBanknoteFromIdCustomer "+Arrays.toString(b));
+            System.out.println(i + " leftIdBanknoteFromIdCustomer " + Arrays.toString(b));
         }
     }
+
+    private void showRightIdBanknoteFromIdCustomer() {
+        int i = 0;
+        for (byte[] b : this.rightIdBanknoteFromIdCustomerList) {
+            i++;
+            System.out.println(i + " rightIdBanknoteFromIdCustomer " + Arrays.toString(b));
+        }
+    }
+
+    private void showLeftIdBanknoteFromIdCustomerRandom1() {
+        int i = 0;
+        for (byte[] b : this.leftIdBanknoteFromIdCustomerRandom1List) {
+            i++;
+            System.out.println(i + " LeftIdBanknoteFromIdCustomerRandom1 " + Arrays.toString(b));
+        }
+    }
+
+    private void showLeftIdBanknoteFromIdCustomerRandom2() {
+        int i = 0;
+        for (byte[] b : this.leftIdBanknoteFromIdCustomerRandom2List) {
+            i++;
+            System.out.println(i + " leftIdBanknoteFromIdCustomerRandom2 " + Arrays.toString(b));
+        }
+    }
+
+    private void showLeftIdBanknoteFromIdCustomerHash() {
+        int i = 0;
+        for (byte[] b : this.leftIdBanknoteFromIdCustomerHashList) {
+            i++;
+            System.out.println(i + " leftIdBanknoteFromIdCustomerHash " + Arrays.toString(b));
+        }
+
+    }
+
+    private void showRightIdBanknoteFromIdCustomerRandom1() {
+        int i = 0;
+        for (byte[] b : this.rightIdBanknoteFromIdCustomerRandom1List) {
+            i++;
+            System.out.println(i + " RightIdBanknoteFromIdCustomerRandom1 " + Arrays.toString(b));
+        }
+    }
+
+    private void showRightIdBanknoteFromIdCustomerRandom2() {
+        int i = 0;
+        for (byte[] b : this.rightIdBanknoteFromIdCustomerRandom2List) {
+            i++;
+            System.out.println(i + " RightIdBanknoteFromIdCustomerRandom2 " + Arrays.toString(b));
+        }
+    }
+
+    private void showRightIdBanknoteFromIdCustomerHash() {
+        int i = 0;
+        for (byte[] b : this.rightIdBanknoteFromIdCustomerHashList) {
+            i++;
+            System.out.println(i + " RightIdBanknoteFromIdCustomerHash " + Arrays.toString(b));
+        }
+    }
+
 }

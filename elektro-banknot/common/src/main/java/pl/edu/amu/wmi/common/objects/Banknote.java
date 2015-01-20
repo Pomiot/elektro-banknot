@@ -28,7 +28,6 @@ public class Banknote implements Serializable {
     private String amount;
     private byte[] uniquenessString;
 
-    //pola tymczasowe chyba
     private final List<byte[]> leftIdBanknoteFromIdCustomerList = new ArrayList<>();
     private final List<byte[]> rightIdBanknoteFromIdCustomerList = new ArrayList<>();
 
@@ -38,7 +37,7 @@ public class Banknote implements Serializable {
 
     private final List<byte[]> rightIdBanknoteFromIdCustomerRandom1List = new ArrayList<>();
     private final List<byte[]> rightIdBanknoteFromIdCustomerRandom2List = new ArrayList<>();
-    private final List<byte[]> rightIdBanknoteFromIdCustomerHashList = new ArrayList<>();
+    private List<byte[]> rightIdBanknoteFromIdCustomerHashList = new ArrayList<>();
 
     public Banknote(String amount, byte[] customerId) {
         this.amount = amount;

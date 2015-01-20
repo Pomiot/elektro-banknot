@@ -6,6 +6,7 @@ import org.springframework.jms.core.MessageCreator;
 import pl.edu.amu.wmi.common.objects.Banknote;
 
 import javax.jms.*;
+import pl.edu.amu.wmi.common.Util.util;
 
 /**
  * Created by Tomasz on 2015-01-18.
@@ -39,7 +40,8 @@ public class PurchaseFromShopService {
 
                 message.setStringProperty("item", "fortepian");
                 //Tymczasowa modyfikacja do testów
-                Banknote banknot = new Banknote("1000");
+                
+                Banknote banknot = new Banknote("1000",util.generateSecureRandom(16));
                 System.out.println("Id money: "+Arrays.toString(banknot.getUniquenessString()));
                 message.setObject(banknot);
                 message.setJMSReplyTo(identificationSendingQueue);

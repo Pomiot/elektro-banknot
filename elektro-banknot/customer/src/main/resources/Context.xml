@@ -66,6 +66,20 @@
         <property name="identificationSendingQueue" ref="identificationSendingQueue"/>
     </bean>
 
+    <!-- otrzymywanie klucza od BANKu -->
+
+    <bean id="bankPublicKeyQueueForCustomer" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="bankPublicKeyQueueForCustomer"/>
+    </bean>
+
+    <bean id="messageListenerContainer3" class="org.springframework.jms.listener.SimpleMessageListenerContainer">
+        <property name="messageListener" ref="bankPublicKeyReceiverService"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="destination" ref="bankPublicKeyQueueForCustomer"/>
+    </bean>
+
+    <bean id="bankPublicKeyReceiverService" class="pl.edu.amu.wmi.customer.services.BankPublicKeyReceiverService">
+    </bean>
 
 
 

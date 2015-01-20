@@ -30,13 +30,18 @@
 
     <!-- komunikacja BANK - SKLEP -->
 
-    <bean id="bankPublicKeyQueue" class="org.apache.activemq.command.ActiveMQQueue">
-        <constructor-arg value="bankPublicKeyQueue"/>
+    <bean id="bankPublicKeyQueueForShop" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="bankPublicKeyQueueForShop"/>
+    </bean>
+
+    <bean id="bankPublicKeyQueueForCustomer" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="bankPublicKeyQueueForCustomer"/>
     </bean>
 
     <bean id="sendPublicKeyToShopService" class="pl.edu.amu.wmi.bank.services.SendPublicKeyToShopService">
         <property name="jmsTemplate" ref="jmsTemplate"/>
-        <property name="bankPublicKeyQueue" ref="bankPublicKeyQueue"/>
+        <property name="bankPublicKeyQueueForShop" ref="bankPublicKeyQueueForShop"/>
+        <property name="bankPublicKeyQueueForCustomer" ref="bankPublicKeyQueueForCustomer"/>
     </bean>
 
 </beans>

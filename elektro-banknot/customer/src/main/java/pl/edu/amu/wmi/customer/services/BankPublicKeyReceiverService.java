@@ -1,4 +1,4 @@
-package pl.edu.amu.wmi.shop.services;
+package pl.edu.amu.wmi.customer.services;
 
 
 import com.google.common.base.Preconditions;
@@ -33,7 +33,7 @@ public class BankPublicKeyReceiverService implements MessageListener {
         try {
 
             if(objectMessage.getObject() instanceof PublicKey)
-            System.out.println("Sklep: otrzymałem klucz publiczny od banku");
+                System.out.println("Klient: otrzymałem klucz publiczny od banku");
 
             setBankPublicKey((PublicKey) objectMessage.getObject());
 

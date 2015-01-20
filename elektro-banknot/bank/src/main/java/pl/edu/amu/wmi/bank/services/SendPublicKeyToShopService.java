@@ -13,19 +13,24 @@ public class SendPublicKeyToShopService {
 
     JmsTemplate jmsTemplate;
 
-    Destination bankPublicKeyQueue;
+    Destination bankPublicKeyQueueForCustomer;
+    Destination bankPublicKeyQueueForShop;
 
     public void setJmsTemplate(JmsTemplate jmsTemplate) {
         this.jmsTemplate = jmsTemplate;
     }
 
-    public void setBankPublicKeyQueue(Destination bankPublicKeyQueue) {
-        this.bankPublicKeyQueue = bankPublicKeyQueue;
+    public void setBankPublicKeyQueueForCustomer(Destination bankPublicKeyQueueForCustomer) {
+        this.bankPublicKeyQueueForCustomer = bankPublicKeyQueueForCustomer;
+    }
+
+    public void setBankPublicKeyQueueForShop(Destination bankPublicKeyQueueForShop) {
+        this.bankPublicKeyQueueForShop = bankPublicKeyQueueForShop;
     }
 
     public void sendPublicKey(final PublicKey key){
 
-        jmsTemplate.send(bankPublicKeyQueue, new MessageCreator() {
+        jmsTemplate.send(bankPublicKeyQueueForShop, new MessageCreator() {
             @Override
             public Message createMessage(Session session) throws JMSException {
 
@@ -33,6 +38,19 @@ public class SendPublicKeyToShopService {
                 message.setObject(key);
 
                 System.out.println("Bank: wysyłam swój publiczny klucz do sklepu");
+
+                return message;
+            }
+        });
+
+        jmsTemplate.send(bankPublicKeyQueueForCustomer, new MessageCreator() {
+            @Override
+            public Message createMessage(Session session) throws JMSException {
+
+                ObjectMessage message = session.createObjectMessage();
+                message.setObject(key);
+
+                System.out.println("Bank: wysyłam swój publiczny klucz do klienta");
 
                 return message;
             }

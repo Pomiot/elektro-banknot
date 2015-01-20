@@ -33,14 +33,14 @@
 
     <!-- komunikacja SKLEP - BANK -->
 
-    <bean id="bankPublicKeyQueue" class="org.apache.activemq.command.ActiveMQQueue">
-        <constructor-arg value="bankPublicKeyQueue"/>
+    <bean id="bankPublicKeyQueueForShop" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="bankPublicKeyQueueForShop"/>
     </bean>
 
     <bean id="messageListenerContainer2" class="org.springframework.jms.listener.SimpleMessageListenerContainer">
         <property name="messageListener" ref="bankPublicKeyReceiverService"/>
         <property name="connectionFactory" ref="connectionFactory"/>
-        <property name="destination" ref="bankPublicKeyQueue"/>
+        <property name="destination" ref="bankPublicKeyQueueForShop"/>
     </bean>
 
     <bean id="bankPublicKeyReceiverService" class="pl.edu.amu.wmi.shop.services.BankPublicKeyReceiverService">

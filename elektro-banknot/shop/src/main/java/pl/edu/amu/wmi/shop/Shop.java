@@ -7,6 +7,9 @@ package pl.edu.amu.wmi.shop;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import pl.edu.amu.wmi.shop.services.BankPublicKeyReceiverService;
+
+import java.security.PublicKey;
 
 /**
  *
@@ -18,6 +21,8 @@ public class Shop {
         ApplicationContext context = new ClassPathXmlApplicationContext("Context.xml");
         
         Thread.sleep(1000);
+
+        PublicKey publicKey = ((BankPublicKeyReceiverService) context.getBean("bankPublicKeyReceiverService")).getBankPublicKey();
 
     }
 }

@@ -34,6 +34,7 @@ public class Bank {
         final PublicKey publicKey = keyPair.getPublic();
         final PrivateKey privateKey = keyPair.getPrivate();
 
+        Thread.sleep(5000);
 
 
         keySender.sendPublicKey(publicKey);

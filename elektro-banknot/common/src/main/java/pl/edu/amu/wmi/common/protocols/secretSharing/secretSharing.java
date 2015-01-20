@@ -27,7 +27,6 @@ public class secretSharing {
         if (!this.message.isEmpty()) {
             this.byteMessage = message.getBytes("UTF8");
         }
-        System.out.println("Dlugosc raw:" + this.byteMessage.length);
         this.random1 = util.generateSecureRandom(this.byteMessage.length);
         this.result = new byte[this.byteMessage.length];
         int i = 0;

@@ -13,9 +13,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Patryk
  */
 public class Shop {
-    public static void main(String[] args) {
-         ApplicationContext context = new ClassPathXmlApplicationContext("Context.xml");
+    public static void main(String[] args) throws InterruptedException {
+
+        ApplicationContext context = new ClassPathXmlApplicationContext("Context.xml");
         
-        
+        Thread.sleep(1000);
+
     }
 }

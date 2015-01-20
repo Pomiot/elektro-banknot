@@ -27,4 +27,16 @@
         <property name="connectionFactory" ref="connectionFactory"/>
         <property name="destination" ref="cashGenerationQueue"/>
     </bean>
+
+    <!-- komunikacja BANK - SKLEP -->
+
+    <bean id="bankPublicKeyQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="bankPublicKeyQueue"/>
+    </bean>
+
+    <bean id="sendPublicKeyToShopService" class="pl.edu.amu.wmi.bank.services.SendPublicKeyToShopService">
+        <property name="jmsTemplate" ref="jmsTemplate"/>
+        <property name="bankPublicKeyQueue" ref="bankPublicKeyQueue"/>
+    </bean>
+
 </beans>

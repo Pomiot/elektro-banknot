@@ -10,6 +10,8 @@ import pl.edu.amu.wmi.common.objects.UnblindingKeysRequest;
 import pl.edu.amu.wmi.customer.BankPublicKey;
 
 import javax.jms.*;
+import pl.edu.amu.wmi.common.Util.util;
+import pl.edu.amu.wmi.common.objects.BanknotesGenerator;
 
 /**
  * Created by Tomasz on 2015-01-15.
@@ -106,8 +108,22 @@ public class CashReceptionService implements MessageListener {
         jmsTemplate.send(cashGenerationQueue, new MessageCreator() {
             @Override
             public Message createMessage(Session session) throws JMSException {
-
-                BanknotesToGeneration banknotesToGeneration = new BanknotesToGeneration();
+                
+                BanknotesGenerator banknotesGenerator = new BanknotesGenerator(util.generateSecureRandom(16));
+                banknotesGenerator.banknotesGenerate("1000");
+                
+                BanknotesToGeneration banknotesToGeneration = new BanknotesToGeneration(
+                        banknotesGenerator.banknoteConfigData().get(0),
+                        banknotesGenerator.banknoteConfigData().get(1), 
+                        banknotesGenerator.banknoteConfigData().get(2),
+                        banknotesGenerator.banknoteConfigData().get(3),
+                        banknotesGenerator.banknoteConfigData().get(4),
+                        banknotesGenerator.banknoteConfigData().get(5), 
+                        banknotesGenerator.banknoteConfigData().get(6), 
+                        banknotesGenerator.banknoteConfigData().get(7), 
+                        banknotesGenerator.banknoteConfigData().get(8), 
+                        banknotesGenerator.banknoteConfigData().get(9),
+                        banknotesGenerator.banknotesInBytes());
 
                 ObjectMessage message = session.createObjectMessage();
                 message.setObject(banknotesToGeneration);

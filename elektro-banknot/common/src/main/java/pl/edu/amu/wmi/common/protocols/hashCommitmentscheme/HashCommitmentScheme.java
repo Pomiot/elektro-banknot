@@ -13,9 +13,7 @@ import pl.edu.amu.wmi.common.Util.util;
  *
  * @author Patryk
  */
-public class HashCommitmentScheme {
-
-    private final static int SIZE_OF_RANDOM = 16;
+public class HashCommitmentScheme implements HashCommitmentSchemeIface {
 
     private byte[] random1;
     private byte[] random2;

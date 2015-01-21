@@ -55,7 +55,8 @@ public class CashGenerationService implements MessageListener, ApplicationContex
             if(objectMessage.getObject() instanceof BanknotesToGeneration){
 
                 this.savedBanknotesToGeneration = (BanknotesToGeneration) objectMessage.getObject();
-
+                System.out.println("TRALALA "+this.savedBanknotesToGeneration.getBanknotesBytesArray().length
+);
                 System.out.println("Bank: otrzymałem od klienta żądanie wystawienia banknotu.");
 
                 Destination replyTo = objectMessage.getJMSReplyTo();

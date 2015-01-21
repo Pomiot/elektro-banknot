@@ -23,7 +23,7 @@ import pl.edu.amu.wmi.common.protocols.secretSharing.secretSharing;
  * Created by Tomasz on 2015-01-15. Modification by Patryk on 2015-01-19
  *
  */
-public class Banknote implements Serializable {
+public class Banknote implements Serializable,BanknoteIface {
 
     private String amount;
     private byte[] uniquenessString;
@@ -42,7 +42,6 @@ public class Banknote implements Serializable {
     public Banknote(String amount, byte[] customerId) {
         this.amount = amount;
         this.generateUniquenessString();
-        System.out.println(">---Customer ID: " + Arrays.toString(customerId));
         this.generateCustomerIdInBanknote(customerId);
         this.showAll();
     }
@@ -93,7 +92,7 @@ public class Banknote implements Serializable {
 
     //Generuje identyfikator banknotu
     private void generateUniquenessString() {
-        this.uniquenessString = util.generateSecureRandom(16);
+        this.uniquenessString = util.generateSecureRandom(lengthUniquenessString);
     }
 
     //Funkcja generująca pojedynczy identyfikator banknotu

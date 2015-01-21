@@ -1,19 +1,30 @@
 package pl.edu.amu.wmi.bank.services;
 
 import com.google.common.base.Preconditions;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import pl.edu.amu.wmi.bank.Keys;
 import pl.edu.amu.wmi.common.objects.BanknotesToGeneration;
 import pl.edu.amu.wmi.common.objects.SignedBanknote;
-import pl.edu.amu.wmi.common.objects.UnblindingKeysResponse;
 import pl.edu.amu.wmi.common.objects.UnblindingKeysRequest;
+import pl.edu.amu.wmi.common.objects.UnblindingKeysResponse;
 
 import javax.jms.*;
+import java.security.KeyPair;
 
 /**
  * Created by Tomasz on 2015-01-08.
  **/
-public class CashGenerationService implements MessageListener {
+public class CashGenerationService implements MessageListener, ApplicationContextAware {
+
+    private ApplicationContext context;
+
+    private BanknotesToGeneration savedBanknotesToGeneration;
+
+    private UnblindingKeysResponse savedUnblindingKeysResponse;
 
     private JmsTemplate jmsTemplate;
 
@@ -43,17 +54,21 @@ public class CashGenerationService implements MessageListener {
 
             if(objectMessage.getObject() instanceof BanknotesToGeneration){
 
-                BanknotesToGeneration banknotesToGeneration = (BanknotesToGeneration) objectMessage.getObject();
+                this.savedBanknotesToGeneration = (BanknotesToGeneration) objectMessage.getObject();
 
                 System.out.println("Bank: otrzymałem od klienta żądanie wystawienia banknotu.");
 
                 Destination replyTo = objectMessage.getJMSReplyTo();
+
                 jmsTemplate.send(replyTo, new MessageCreator() {
                     @Override
                     public Message createMessage(Session session) throws JMSException {
 
                         ObjectMessage replyMessage = session.createObjectMessage();
-                        UnblindingKeysRequest unblindingKeysRequest = new UnblindingKeysRequest();
+
+                        UnblindingKeysRequest unblindingKeysRequest =
+                                ProcessBanknotesToGeneration.generateUnblindingKeysRequest(savedBanknotesToGeneration);
+
                         replyMessage.setObject(unblindingKeysRequest);
                         replyMessage.setJMSReplyTo(cashGenerationQueue);
 
@@ -85,7 +100,12 @@ public class CashGenerationService implements MessageListener {
                     public Message createMessage(Session session) throws JMSException {
 
                         ObjectMessage replyMessage = session.createObjectMessage();
-                        SignedBanknote signedBanknote = new SignedBanknote();
+
+                        KeyPair kp = ((Keys) context.getBean("keys")).getKeyPair();
+
+                        SignedBanknote signedBanknote =
+                                ProcessUnblindingKeysResponse.generateSignedBanknote(savedUnblindingKeysResponse, savedBanknotesToGeneration,kp);
+
                         replyMessage.setObject(signedBanknote);
 
                         System.out.println("Bank: wysyłam do klienta podpisany banknot.");
@@ -98,5 +118,10 @@ public class CashGenerationService implements MessageListener {
         } catch (JMSException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
     }
 }

@@ -38,7 +38,8 @@
         <constructor-arg value="bankPublicKeyQueueForCustomer"/>
     </bean>
 
-    <bean id="sendPublicKeyToShopService" class="pl.edu.amu.wmi.bank.services.SendPublicKeyToShopService">
+    <bean id="sendPublicKeyToShopService" class="pl.edu.amu.wmi.bank.services.SendPublicKeyService">
+        <property name="keys" ref="keys"/>
         <property name="jmsTemplate" ref="jmsTemplate"/>
         <property name="bankPublicKeyQueueForShop" ref="bankPublicKeyQueueForShop"/>
         <property name="bankPublicKeyQueueForCustomer" ref="bankPublicKeyQueueForCustomer"/>
@@ -47,5 +48,9 @@
     <!-- konta klienta i sklepu -->
 
     <bean id="accounts" class="pl.edu.amu.wmi.bank.billing.Accounts"/>
+
+    <!-- operacje generacji banknotu -->
+
+    <bean id="keys" class="pl.edu.amu.wmi.bank.Keys"/>
 
 </beans>

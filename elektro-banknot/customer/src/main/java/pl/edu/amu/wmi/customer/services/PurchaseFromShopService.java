@@ -1,6 +1,9 @@
 package pl.edu.amu.wmi.customer.services;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import pl.edu.amu.wmi.common.objects.Banknote;
@@ -45,8 +48,13 @@ public class PurchaseFromShopService {
                 Banknote banknot = new Banknote("1000",util.generateSecureRandom(16));
                 
                 BanknotesGenerator generator = new BanknotesGenerator(util.generateSecureRandom(16));
-                generator.banknotesGenerate("10000");
-                
+                generator.banknotesGenerate("1000");
+                                try {
+                    byte[] banknotesInBytes = generator.banknotesInBytes();
+                    System.out.println("DUPA:"+banknotesInBytes.length);
+                } catch (IOException ex) {
+                    Logger.getLogger(PurchaseFromShopService.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 message.setObject(banknot);
                 message.setJMSReplyTo(identificationSendingQueue);
 

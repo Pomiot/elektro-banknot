@@ -37,7 +37,7 @@ public class Banknote implements Serializable {
 
     private final List<byte[]> rightIdBanknoteFromIdCustomerRandom1List = new ArrayList<>();
     private final List<byte[]> rightIdBanknoteFromIdCustomerRandom2List = new ArrayList<>();
-    private List<byte[]> rightIdBanknoteFromIdCustomerHashList = new ArrayList<>();
+    private final List<byte[]> rightIdBanknoteFromIdCustomerHashList = new ArrayList<>();
 
     public Banknote(String amount, byte[] customerId) {
         this.amount = amount;
@@ -51,6 +51,38 @@ public class Banknote implements Serializable {
         return amount;
     }
 
+    public List<byte[]> getLeftIdBanknoteFromIdCustomerHashList() {
+        return leftIdBanknoteFromIdCustomerHashList;
+    }
+
+    public List<byte[]> getLeftIdBanknoteFromIdCustomerList() {
+        return leftIdBanknoteFromIdCustomerList;
+    }
+
+    public List<byte[]> getLeftIdBanknoteFromIdCustomerRandom1List() {
+        return leftIdBanknoteFromIdCustomerRandom1List;
+    }
+
+    public List<byte[]> getLeftIdBanknoteFromIdCustomerRandom2List() {
+        return leftIdBanknoteFromIdCustomerRandom2List;
+    }
+
+    public List<byte[]> getRightIdBanknoteFromIdCustomerHashList() {
+        return rightIdBanknoteFromIdCustomerHashList;
+    }
+
+    public List<byte[]> getRightIdBanknoteFromIdCustomerList() {
+        return rightIdBanknoteFromIdCustomerList;
+    }
+
+    public List<byte[]> getRightIdBanknoteFromIdCustomerRandom1List() {
+        return rightIdBanknoteFromIdCustomerRandom1List;
+    }
+
+    public List<byte[]> getRightIdBanknoteFromIdCustomerRandom2List() {
+        return rightIdBanknoteFromIdCustomerRandom2List;
+    }
+    
     public void setAmount(String value) {
         this.amount = value;
     }

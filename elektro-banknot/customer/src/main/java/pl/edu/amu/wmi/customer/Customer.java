@@ -3,7 +3,7 @@ package pl.edu.amu.wmi.customer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import pl.edu.amu.wmi.customer.services.BankPublicKeyReceiverService;
-import pl.edu.amu.wmi.customer.services.CustomerCashGenerationService;
+import pl.edu.amu.wmi.customer.services.CashReceptionService;
 import pl.edu.amu.wmi.customer.services.PurchaseFromShopService;
 
 import java.io.BufferedReader;
@@ -17,7 +17,7 @@ public class Customer {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         ApplicationContext context = new ClassPathXmlApplicationContext("Context.xml");
-        CustomerCashGenerationService cgs = (CustomerCashGenerationService) context.getBean("customerCashGenerationService");
+        CashReceptionService cgs = (CashReceptionService) context.getBean("cashReceptionService");
         PurchaseFromShopService pfs = (PurchaseFromShopService) context.getBean("purchaseFromShopService");
         BankPublicKeyReceiverService keyReceiverService = (BankPublicKeyReceiverService) context.getBean("bankPublicKeyReceiverService");
 

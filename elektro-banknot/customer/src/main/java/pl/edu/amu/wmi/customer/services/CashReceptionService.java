@@ -3,6 +3,7 @@ package pl.edu.amu.wmi.customer.services;
 import com.google.common.base.Preconditions;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import pl.edu.amu.wmi.common.objects.BanknotesToGeneration;
 import pl.edu.amu.wmi.common.objects.SignedBanknote;
 import pl.edu.amu.wmi.common.objects.UnblindingKeysResponse;
 import pl.edu.amu.wmi.common.objects.UnblindingKeysRequest;
@@ -17,6 +18,12 @@ public class CashReceptionService implements MessageListener {
 
     public Destination getCashReceptionQueue() {
         return cashReceptionQueue;
+    }
+
+    public Destination cashGenerationQueue;
+
+    public void setCashGenerationQueue(Destination cashGenerationQueue) {
+        this.cashGenerationQueue = cashGenerationQueue;
     }
 
     public void setCashReceptionQueue(Destination cashReceptionQueue) {
@@ -74,7 +81,6 @@ public class CashReceptionService implements MessageListener {
                         return replyMessage;
                     }
                 });
-
             }
 
             if (objectMessage.getObject() instanceof SignedBanknote) {
@@ -94,5 +100,23 @@ public class CashReceptionService implements MessageListener {
         } catch (JMSException e) {
             e.printStackTrace();
         }
+    }
+
+    public void generateCash(final String text) {
+        jmsTemplate.send(cashGenerationQueue, new MessageCreator() {
+            @Override
+            public Message createMessage(Session session) throws JMSException {
+
+                BanknotesToGeneration banknotesToGeneration = new BanknotesToGeneration();
+
+                ObjectMessage message = session.createObjectMessage();
+                message.setObject(banknotesToGeneration);
+                message.setJMSReplyTo(cashReceptionQueue);
+
+                System.out.println("Klient: wysyłam do banku żądanie wygenerowania banknotu.");
+
+                return message;
+            }
+        });
     }
 }

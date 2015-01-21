@@ -7,6 +7,7 @@ package pl.edu.amu.wmi.bank;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import pl.edu.amu.wmi.bank.billing.Accounts;
 import pl.edu.amu.wmi.bank.services.SendPublicKeyToShopService;
 import sun.security.rsa.RSAKeyPairGenerator;
 
@@ -34,10 +35,11 @@ public class Bank {
         final PublicKey publicKey = keyPair.getPublic();
         final PrivateKey privateKey = keyPair.getPrivate();
 
-        Thread.sleep(5000);
-
-
         keySender.sendPublicKey(publicKey);
+
+        Accounts accounts = (Accounts) context.getBean("accounts");
+
+        System.out.println(accounts);
 
     }
 }

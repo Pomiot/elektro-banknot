@@ -6,17 +6,27 @@ import pl.edu.amu.wmi.customer.services.BankPublicKeyReceiverService;
 import pl.edu.amu.wmi.customer.services.CustomerCashGenerationService;
 import pl.edu.amu.wmi.customer.services.PurchaseFromShopService;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.PublicKey;
 
 public class Customer {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
+
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
         ApplicationContext context = new ClassPathXmlApplicationContext("Context.xml");
         CustomerCashGenerationService cgs = (CustomerCashGenerationService) context.getBean("customerCashGenerationService");
         PurchaseFromShopService pfs = (PurchaseFromShopService) context.getBean("purchaseFromShopService");
-
         BankPublicKeyReceiverService keyReceiverService = (BankPublicKeyReceiverService) context.getBean("bankPublicKeyReceiverService");
 
-        Thread.sleep(2000);
+
+        System.out.println("*** Aplikacja kliencka uruchomiona ***");
+        System.out.println("*** Poczekaj na otrzymanie klucza i wciśnij Enter ***");
+
+        reader.readLine();
 
         PublicKey bankPublicKey = null;
 

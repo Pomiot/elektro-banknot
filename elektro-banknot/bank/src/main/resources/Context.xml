@@ -44,4 +44,8 @@
         <property name="bankPublicKeyQueueForCustomer" ref="bankPublicKeyQueueForCustomer"/>
     </bean>
 
+    <!-- konta klienta i sklepu -->
+
+    <bean id="accounts" class="pl.edu.amu.wmi.bank.billing.Accounts"/>
+
 </beans>

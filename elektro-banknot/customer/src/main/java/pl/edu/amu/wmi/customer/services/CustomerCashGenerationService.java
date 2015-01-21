@@ -3,6 +3,7 @@ package pl.edu.amu.wmi.customer.services;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import pl.edu.amu.wmi.common.objects.BanknotesToGeneration;
+import pl.edu.amu.wmi.customer.BankPublicKey;
 
 import javax.jms.*;
 
@@ -15,6 +16,12 @@ public class CustomerCashGenerationService {
 
     private Destination cashGenerationQueue;
     private Destination cashReceptionQueue;
+
+    private BankPublicKey bankPublicKey;
+
+    public void setBankPublicKey(BankPublicKey bankPublicKey) {
+        this.bankPublicKey = bankPublicKey;
+    }
 
     public void setCashReceptionQueue(Destination cashReceptionQueue) {
         this.cashReceptionQueue = cashReceptionQueue;

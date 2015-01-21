@@ -9,7 +9,6 @@ import pl.edu.amu.wmi.customer.services.PurchaseFromShopService;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.PublicKey;
 
 public class Customer {
     public static void main(String[] args) throws InterruptedException, IOException {
@@ -27,11 +26,6 @@ public class Customer {
         System.out.println("*** Poczekaj na otrzymanie klucza i wciśnij Enter ***");
 
         reader.readLine();
-
-        PublicKey bankPublicKey = null;
-
-        bankPublicKey = (PublicKey) keyReceiverService.getBankPublicKey();
-
 
         cgs.generateCash("DUUUUUUUUPA");
 

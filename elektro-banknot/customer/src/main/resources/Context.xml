@@ -26,12 +26,14 @@
     <bean id="cashReceptionService" class="pl.edu.amu.wmi.customer.services.CashReceptionService">
         <property name="jmsTemplate" ref="jmsTemplate"/>
         <property name="cashReceptionQueue" ref="cashReceptionQueue"/>
+        <property name="bankPublicKey" ref="bankPublicKey"/>
     </bean>
 
     <bean id="customerCashGenerationService" class="pl.edu.amu.wmi.customer.services.CustomerCashGenerationService">
         <property name="jmsTemplate" ref="jmsTemplate"/>
         <property name="cashGenerationQueue" ref="cashGenerationQueue"/>
         <property name="cashReceptionQueue" ref="cashReceptionQueue"/>
+        <property name="bankPublicKey" ref="bankPublicKey"/>
     </bean>
 
     <bean id="messageListenerContainer" class="org.springframework.jms.listener.SimpleMessageListenerContainer">
@@ -78,11 +80,10 @@
         <property name="destination" ref="bankPublicKeyQueueForCustomer"/>
     </bean>
 
-    <bean id="bankPublicKeyReceiverService" class="pl.edu.amu.wmi.customer.services.BankPublicKeyReceiverService">
-    </bean>
+    <bean id="bankPublicKeyReceiverService" class="pl.edu.amu.wmi.customer.services.BankPublicKeyReceiverService"/>
 
+    <!-- klucz publiczny banku -->
 
-
-
+    <bean id="bankPublicKey" class="pl.edu.amu.wmi.customer.BankPublicKey"/>
 
 </beans>

@@ -13,6 +13,18 @@ import java.security.SecureRandom;
 public class Keys {
 
     private PublicKey publicKey;
+    private PrivateKey privateKey;
+    private KeyPair keyPair;
+
+    public Keys() {
+
+        RSAKeyPairGenerator rsaKeyPairGenerator = new RSAKeyPairGenerator();
+        rsaKeyPairGenerator.initialize(512, new SecureRandom());
+        KeyPair keyPair = rsaKeyPairGenerator.generateKeyPair();
+
+        setPublicKey(keyPair.getPublic());
+        setPrivateKey(keyPair.getPrivate());
+    }
 
     public PrivateKey getPrivateKey() {
         return privateKey;
@@ -30,25 +42,11 @@ public class Keys {
         this.publicKey = publicKey;
     }
 
-    private PrivateKey privateKey;
-
-    private KeyPair keyPair;
-
     public KeyPair getKeyPair() {
         return keyPair;
     }
 
     public void setKeyPair(KeyPair keyPair) {
         this.keyPair = keyPair;
-    }
-
-    public Keys(){
-
-        RSAKeyPairGenerator rsaKeyPairGenerator = new RSAKeyPairGenerator();
-        rsaKeyPairGenerator.initialize(512,new SecureRandom());
-        KeyPair keyPair = rsaKeyPairGenerator.generateKeyPair();
-
-        setPublicKey(keyPair.getPublic());
-        setPrivateKey(keyPair.getPrivate());
     }
 }

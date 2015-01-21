@@ -6,6 +6,7 @@ import org.springframework.jms.core.MessageCreator;
 import pl.edu.amu.wmi.common.objects.SignedBanknote;
 import pl.edu.amu.wmi.common.objects.UnblindingKeysResponse;
 import pl.edu.amu.wmi.common.objects.UnblindingKeysRequest;
+import pl.edu.amu.wmi.customer.BankPublicKey;
 
 import javax.jms.*;
 
@@ -33,6 +34,12 @@ public class CashReceptionService implements MessageListener {
     private JmsTemplate jmsTemplate;
 
     private Destination cashReceptionQueue;
+
+    private BankPublicKey bankPublicKey;
+
+    public void setBankPublicKey(BankPublicKey bankPublicKey) {
+        this.bankPublicKey = bankPublicKey;
+    }
 
     @Override
     public void onMessage(final Message message) {

@@ -43,7 +43,7 @@ public class Banknote implements Serializable,BanknoteIface {
         this.amount = amount;
         this.generateUniquenessString();
         this.generateCustomerIdInBanknote(customerId);
-        this.showAll();
+        //this.showAll();
     }
 
     public String getAmount() {

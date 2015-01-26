@@ -10,5 +10,5 @@ package pl.edu.amu.wmi.common.protocols.hashCommitmentscheme;
  * @author Patryk
  */
 public interface HashCommitmentSchemeIface {
-    public final static int SIZE_OF_RANDOM = 16;
+    public final static int SIZE_OF_RANDOM = 8;
 }

@@ -9,11 +9,11 @@ import pl.edu.amu.wmi.customer.services.PurchaseFromShopService;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.NoSuchAlgorithmException;
 
 public class Customer {
-    public static void main(String[] args) throws InterruptedException, IOException {
-
-
+    public static void main(String[] args) throws InterruptedException, IOException, NoSuchAlgorithmException {
+        
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         ApplicationContext context = new ClassPathXmlApplicationContext("Context.xml");

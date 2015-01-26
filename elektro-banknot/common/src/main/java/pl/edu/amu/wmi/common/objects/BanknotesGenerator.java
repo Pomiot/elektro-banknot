@@ -5,10 +5,13 @@ package pl.edu.amu.wmi.common.objects;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.PublicKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pl.edu.amu.wmi.common.protocols.blindSignature.RsaBlind;
 
 /**
  *
@@ -28,6 +31,32 @@ public class BanknotesGenerator {
             this.banknotesList.add(new Banknote(amount, this.customerId));
         }
     }
+    public byte[] banknoteInBytes(){
+        Banknote ban = this.banknotesList.get(0);
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    try {
+                bytes.write(ban.getAmount().getBytes());
+
+                bytes.write(ban.getUniquenessString());
+                for (byte[] leftID : ban.getLeftIdBanknoteFromIdCustomerRandom1List()) {
+                    bytes.write(leftID);
+                }
+                for (byte[] leftID : ban.getLeftIdBanknoteFromIdCustomerHashList()) {
+                    bytes.write(leftID);
+                }
+                for (byte[] rightID : ban.getRightIdBanknoteFromIdCustomerRandom1List()) {
+                    bytes.write(rightID);
+                }
+                for (byte[] rightID : ban.getRightIdBanknoteFromIdCustomerHashList()) {
+                    bytes.write(rightID);
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(BanknotesGenerator.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        
+        return bytes.toByteArray();
+        
+    }
 
     public byte[] banknotesInBytes() {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -36,27 +65,27 @@ public class BanknotesGenerator {
                 bytes.write(banknote.getAmount().getBytes());
 
                 bytes.write(banknote.getUniquenessString());
-                for (byte[] leftID : banknote.getLeftIdBanknoteFromIdCustomerList()) {
-                    bytes.write(leftID);
-                }
+//                for (byte[] leftID : banknote.getLeftIdBanknoteFromIdCustomerList()) {
+//                    bytes.write(leftID);
+//                }
                 for (byte[] leftID : banknote.getLeftIdBanknoteFromIdCustomerRandom1List()) {
                     bytes.write(leftID);
                 }
-                for (byte[] leftID : banknote.getLeftIdBanknoteFromIdCustomerRandom2List()) {
-                    bytes.write(leftID);
-                }
+//                for (byte[] leftID : banknote.getLeftIdBanknoteFromIdCustomerRandom2List()) {
+//                    bytes.write(leftID);
+//                }
                 for (byte[] leftID : banknote.getLeftIdBanknoteFromIdCustomerHashList()) {
                     bytes.write(leftID);
                 }
-                for (byte[] rightID : banknote.getRightIdBanknoteFromIdCustomerList()) {
-                    bytes.write(rightID);
-                }
+//                for (byte[] rightID : banknote.getRightIdBanknoteFromIdCustomerList()) {
+//                    bytes.write(rightID);
+//                }
                 for (byte[] rightID : banknote.getRightIdBanknoteFromIdCustomerRandom1List()) {
                     bytes.write(rightID);
                 }
-                for (byte[] rightID : banknote.getRightIdBanknoteFromIdCustomerRandom2List()) {
-                    bytes.write(rightID);
-                }
+//                for (byte[] rightID : banknote.getRightIdBanknoteFromIdCustomerRandom2List()) {
+//                    bytes.write(rightID);
+//                }
                 for (byte[] rightID : banknote.getRightIdBanknoteFromIdCustomerHashList()) {
                     bytes.write(rightID);
                 }
@@ -83,4 +112,11 @@ public class BanknotesGenerator {
         return list;
     }
 
+    public byte[] blindBanknotesInBytes(RSAPublicKey rsaPublicKey){
+        System.out.println("HALABARDA: "+rsaPublicKey.getAlgorithm());
+        RsaBlind rsaBlind = new RsaBlind((RSAPublicKey)rsaPublicKey);
+        byte[] dupa = rsaBlind.blind(this.banknotesInBytes());
+        System.out.println("Size po blindowaniu"+dupa.length);
+        return null;
+    }
 }

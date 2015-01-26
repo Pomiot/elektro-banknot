@@ -2,16 +2,7 @@ package pl.edu.amu.wmi.customer.UI;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import pl.edu.amu.wmi.common.UI.UIInterface;
-import pl.edu.amu.wmi.common.cryptography.RSA;
-import pl.edu.amu.wmi.common.protocols.blindSignature.RsaBlind;
-import pl.edu.amu.wmi.common.protocols.secretSharing.secretSharing;
 
 public class UI implements UIInterface {
 
@@ -44,7 +35,7 @@ public class UI implements UIInterface {
                     case GENERATE_BILL: {
                         System.out.println("Active module bills creator");
 //                        RSATesting();
-                        SecretTest();
+                        
                         break;
                     }
                     case EXIT: {
@@ -61,30 +52,6 @@ public class UI implements UIInterface {
                 System.out.println(e.getMessage());
             }
 
-        }
-    }
-//RSABlind testing method
-    private void SecretTest(){
-        try {
-            secretSharing secret = new secretSharing("DUPA");
-            secret.generateSecretSharing();
-        } catch (UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchProviderException ex) {
-            Logger.getLogger(UI.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    private void RSATesting() {
-        RSA rsa = new RSA();
-        RsaBlind blind;
-        try {
-            rsa.GeneratePairKey();
-            blind = new RsaBlind(rsa);
-            BigInteger blindMessage = blind.blind("ass");
-            BigInteger blindSign  = blind.sign(blindMessage);
-            BigInteger blindUnblind = blind.unblind(blindSign);
-            blind.verify("ass", blindUnblind);
-            
-        } catch (NoSuchAlgorithmException | NoSuchProviderException | UnsupportedEncodingException ex) {
-            Logger.getLogger(UI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 //CLEAR CONSOLE: AT THIS MOMENT DONT WORK IN NETBEANS PROPABLY WORK IN CONSOLE

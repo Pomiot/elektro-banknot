@@ -1,6 +1,7 @@
 package pl.edu.amu.wmi.bank.services;
 
 import com.google.common.base.Preconditions;
+import java.io.Serializable;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -14,6 +15,8 @@ import pl.edu.amu.wmi.common.objects.UnblindingKeysResponse;
 
 import javax.jms.*;
 import java.security.KeyPair;
+import java.util.ArrayList;
+import pl.edu.amu.wmi.common.objects.BanknoteBlinded;
 
 /**
  * Created by Tomasz on 2015-01-08.
@@ -52,7 +55,7 @@ public class CashGenerationService implements MessageListener, ApplicationContex
              * TODO: bank losuje 99 spośród 100 banknotów i wysyła UnblindingKeyRequest do customera
              */
 
-            if(objectMessage.getObject() instanceof BanknotesToGeneration){
+            if(objectMessage.getObject() instanceof ArrayList<BanknoteBlinded>){
 
                 this.savedBanknotesToGeneration = (BanknotesToGeneration) objectMessage.getObject();
                 System.out.println("TRALALA "+this.savedBanknotesToGeneration.getBanknotesBytesArray().length

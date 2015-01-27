@@ -1,5 +1,8 @@
 package pl.edu.amu.wmi.customer.services;
+/**
+ * otrzymywanie klucza z banki
 
+*/
 
 import com.google.common.base.Preconditions;
 import org.springframework.beans.BeansException;

@@ -2,11 +2,18 @@ package pl.edu.amu.wmi.common.protocols.blindSignature;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import pl.edu.amu.wmi.common.cryptography.RSA;
 
 public class RsaBlind {
@@ -46,8 +53,6 @@ public class RsaBlind {
         this.gcd = null; //
         this.Rsa = Rsa;
         this.rsaPublicKey = null;
-        System.out.println(this.Rsa.getPublicKey().getAlgorithm());
-        System.out.println(Arrays.toString(this.Rsa.getPublicKey().getEncoded()));
 
     }
 
@@ -55,7 +60,11 @@ public class RsaBlind {
         return Rsa;
     }
 
-    private void prepareBlind() {
+    public byte[] getR() {
+        return r.toByteArray();
+    }
+
+    public void prepareBlind() {
         if (this.Rsa != null) {
             if (this.Rsa.getPublicKey() != null) {
                 this.e = this.Rsa.getPublicKey().getPublicExponent();
@@ -75,24 +84,26 @@ public class RsaBlind {
         }
     }
 
-    public byte[] blind(byte[] message) {
-        prepareBlind();
-        byte[] raw = message;
-        m = new BigInteger(raw);
-
-        //PREPARE R number
+    public void generateNewRandom() {
         try {
             SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
-            byte[] randomBytes = new byte[10];
+            byte[] randomBytes = new byte[this.n.toByteArray().length];
             do {
                 random.nextBytes(randomBytes);
-                r = new BigInteger(randomBytes);
-                gcd = r.gcd(n);
-                System.out.println("gcd: " + gcd);
-            } while (!gcd.equals(one) || r.compareTo(n) >= 0 || r.compareTo(one) <= 0);
+                this.r = new BigInteger(randomBytes);
+                gcd = this.r.gcd(n);
+            } while (!gcd.equals(one) || this.r.compareTo(n) >= 0 || this.r.compareTo(one) <= 0);
+            System.out.println("random size" + this.r.toByteArray().length);
+        } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
+            Logger.getLogger(RsaBlind.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
-            BigInteger b = ((r.modPow(e, n)).multiply(m)).mod(n);
-            System.out.println("b: " + b);
+    public byte[] blind(byte[] message) {
+        byte[] raw = message;
+        m = new BigInteger(raw);
+        try {
+            BigInteger b = ((this.r.modPow(e, n)).multiply(m)).mod(n);
             return b.toByteArray();
         } catch (Exception e) {
 
@@ -102,17 +113,17 @@ public class RsaBlind {
     }
 //METHOD SIGN BLIND MESSAGE
 
-    public BigInteger sign(BigInteger b) {
-        prepareBlind();
+    public byte[] sign(byte[] blindedmessage) {
+        BigInteger b = new BigInteger(blindedmessage);
         BigInteger bs = b.modPow(d, n);
         System.out.println("bs = " + bs);
-        return bs;
+        return bs.toByteArray();
     }
 
-    public BigInteger unblind(BigInteger bs) {
-        BigInteger s = r.modInverse(n).multiply(bs).mod(n);
-        System.out.println("s: " + s);
-        return s;
+    public byte[] unblind(byte[] blindedmessage) {
+        BigInteger bs = new BigInteger(blindedmessage);
+        BigInteger s = this.r.modInverse(n).multiply(bs).mod(n);
+        return s.toByteArray();
     }
 
     public void verify(String message, BigInteger unblind) throws UnsupportedEncodingException {
@@ -127,5 +138,73 @@ public class RsaBlind {
         BigInteger check = unblind.modPow(e, n);
         System.out.println(m.equals(check));
 
+    }
+
+    public byte[] blockBlind(byte[] bytes) {
+        int length = this.n.toByteArray().length;
+        byte[] scrambled = new byte[0];
+        byte[] toReturn = new byte[0];
+        byte[] buffer = new byte[length];
+        for (int i = 0; i < bytes.length; i++) {
+            if ((i > 0) && (i % length == 0)) {
+                scrambled = this.blind(buffer);
+
+                toReturn = append(toReturn, scrambled);
+                int newlength = length;
+                if (i + length > bytes.length) {
+                    newlength = bytes.length - i;
+                }
+                buffer = new byte[newlength];
+            }
+            buffer[i % length] = bytes[i];
+        }
+        System.out.println(buffer.length);
+        scrambled = this.blind(buffer);
+
+        toReturn = append(toReturn, scrambled);
+
+        return toReturn;
+    }
+
+    public byte[] blockUnblind(byte[] bytes) {
+        int length = 128;
+        byte[] scrambled = new byte[0];
+        byte[] toReturn = new byte[0];
+        byte[] buffer = new byte[length];
+        for (int i = 0; i < bytes.length; i++) {
+            if ((i > 0) && (i % length == 0)) {
+                do {
+                    scrambled = this.unblind(buffer);
+                    if (scrambled.length > 128) {
+                        this.prepareBlind();
+                    }
+                } while (!(scrambled.length == 128));
+
+                toReturn = append(toReturn, scrambled);
+                int newlength = length;
+                if (i + length > bytes.length) {
+                    newlength = bytes.length - i;
+                }
+                buffer = new byte[newlength];
+            }
+            buffer[i % length] = bytes[i];
+        }
+
+        scrambled = this.unblind(buffer);
+
+        toReturn = append(toReturn, scrambled);
+
+        return toReturn;
+    }
+
+    private byte[] append(byte[] prefix, byte[] suffix) {
+        byte[] toReturn = new byte[prefix.length + suffix.length];
+        for (int i = 0; i < prefix.length; i++) {
+            toReturn[i] = prefix[i];
+        }
+        for (int i = 0; i < suffix.length; i++) {
+            toReturn[i + prefix.length] = suffix[i];
+        }
+        return toReturn;
     }
 }

@@ -3,7 +3,7 @@ package pl.edu.amu.wmi.customer.services;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -18,6 +18,7 @@ import org.springframework.context.ApplicationContextAware;
 import pl.edu.amu.wmi.common.Util.util;
 import pl.edu.amu.wmi.common.cryptography.RSA;
 import pl.edu.amu.wmi.common.objects.BanknotesGenerator;
+import pl.edu.amu.wmi.common.protocols.blindSignature.RsaBlind;
 
 /**
  * Created by Tomasz on 2015-01-18.
@@ -63,30 +64,24 @@ public class PurchaseFromShopService implements ApplicationContextAware {
                 Banknote banknot = new Banknote("1000", util.generateSecureRandom(16));
 //                BanknotesGenerator generator = new BanknotesGenerator(util.generateSecureRandom(16));
 //                generator.banknotesGenerate("1000");
+//                RSA rsa = new RSA();
 //                try {
-//                    RSA rsa = new RSA();
 //                    rsa.GeneratePairKey();
-//                    byte[] encrypted = rsa.EncryptTransfer(generator.banknotesInBytes());
-//                    System.out.println("encrypted" + encrypted.length);
-//                    byte[] decrypted = rsa.DecryptTransfer(encrypted);
-//                    System.out.println("decrypted" + decrypted.length);
-//                    byte[] dupa = generator.banknoteInBytes();
-//                    for (int i =0;i<generator.banknoteInBytes().length;i++){
-//                        if (decrypted[i] != dupa[i]){
-//                            System.out.println("Zle liczy");
-//                            break;
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
+//                    generator.blindBanknotesInBytes(rsa.getPublicKey());
+//                } catch (NoSuchAlgorithmException ex) {
+//                    Logger.getLogger(PurchaseFromShopService.class.getName()).log(Level.SEVERE, null, ex);
 //                }
+
                 message.setObject(banknot);
+
                 message.setJMSReplyTo(identificationSendingQueue);
 
-                System.out.println("Klient: wysyłam do sklepu polecenie dokonania zakupu oraz banknot");
+                System.out.println(
+                        "Klient: wysyłam do sklepu polecenie dokonania zakupu oraz banknot");
 
                 return message;
             }
-        });
+        }
+        );
     }
 }

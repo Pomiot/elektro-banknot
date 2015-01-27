@@ -1,6 +1,8 @@
 package pl.edu.amu.wmi.customer.services;
 
 import com.google.common.base.Preconditions;
+import java.io.Serializable;
+import java.security.interfaces.RSAPublicKey;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import pl.edu.amu.wmi.common.objects.BanknotesToGeneration;
@@ -10,13 +12,19 @@ import pl.edu.amu.wmi.common.objects.UnblindingKeysRequest;
 import pl.edu.amu.wmi.customer.BankPublicKey;
 
 import javax.jms.*;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import pl.edu.amu.wmi.common.Util.util;
+import pl.edu.amu.wmi.common.cryptography.RSA;
 import pl.edu.amu.wmi.common.objects.BanknotesGenerator;
 
 /**
  * Created by Tomasz on 2015-01-15.
  */
-public class CashReceptionService implements MessageListener {
+public class CashReceptionService implements MessageListener, ApplicationContextAware {
+
+    ApplicationContext context;
 
     public Destination getCashReceptionQueue() {
         return cashReceptionQueue;
@@ -60,10 +68,9 @@ public class CashReceptionService implements MessageListener {
             if (objectMessage.getObject() instanceof UnblindingKeysRequest) {
 
                 /**
-                 * Klient otrzymuje żądanie przesłania do banku kluczy odtajniających dla 99 banknotów
-                 * TODO: cała reszta
+                 * Klient otrzymuje żądanie przesłania do banku kluczy
+                 * odtajniających dla 99 banknotów TODO: cała reszta
                  */
-
                 UnblindingKeysRequest unblindingKeysRequest = (UnblindingKeysRequest) objectMessage.getObject();
 
                 System.out.println("Klient: otrzymałem od banku żądanie przekazania kluczy.");
@@ -88,16 +95,13 @@ public class CashReceptionService implements MessageListener {
             if (objectMessage.getObject() instanceof SignedBanknote) {
 
                 /**
-                 * Klient otrzymuje podpisany banknot
-                 * TODO: cała reszta
+                 * Klient otrzymuje podpisany banknot TODO: cała reszta
                  */
-
                 SignedBanknote signedBanknote = (SignedBanknote) objectMessage.getObject();
 
                 System.out.println("Klient: otrzymałem podpisany banknot.");
 
             }
-
 
         } catch (JMSException e) {
             e.printStackTrace();
@@ -108,25 +112,13 @@ public class CashReceptionService implements MessageListener {
         jmsTemplate.send(cashGenerationQueue, new MessageCreator() {
             @Override
             public Message createMessage(Session session) throws JMSException {
-                
                 BanknotesGenerator banknotesGenerator = new BanknotesGenerator(util.generateSecureRandom(16));
                 banknotesGenerator.banknotesGenerate("1000");
-                
-                BanknotesToGeneration banknotesToGeneration = new BanknotesToGeneration(
-                        banknotesGenerator.banknoteConfigData().get(0),
-                        banknotesGenerator.banknoteConfigData().get(1), 
-                        banknotesGenerator.banknoteConfigData().get(2),
-                        banknotesGenerator.banknoteConfigData().get(3),
-                        banknotesGenerator.banknoteConfigData().get(4),
-                        banknotesGenerator.banknoteConfigData().get(5), 
-                        banknotesGenerator.banknoteConfigData().get(6), 
-                        banknotesGenerator.banknoteConfigData().get(7), 
-                        banknotesGenerator.banknoteConfigData().get(8), 
-                        banknotesGenerator.banknoteConfigData().get(9),
-                        banknotesGenerator.banknotesInBytes());
 
+                banknotesGenerator.blindBanknotesInBytes((RSAPublicKey) context.getBean("bankPublicKey"));
+                
                 ObjectMessage message = session.createObjectMessage();
-                message.setObject(banknotesToGeneration);
+                message.setObject((Serializable) banknotesGenerator.getBanknotesBlindedList());
                 message.setJMSReplyTo(cashReceptionQueue);
 
                 System.out.println("Klient: wysyłam do banku żądanie wygenerowania banknotu.");
@@ -134,5 +126,10 @@ public class CashReceptionService implements MessageListener {
                 return message;
             }
         });
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
     }
 }

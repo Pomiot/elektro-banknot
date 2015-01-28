@@ -2,24 +2,21 @@ package pl.edu.amu.wmi.common.protocols.blindSignature;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
+import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import pl.edu.amu.wmi.common.cryptography.RSA;
 
 public class RsaBlind {
 
     private final RSA Rsa;
     private final RSAPublicKey rsaPublicKey;
+    private final RSAPrivateKey rsaPrivateKey;
 //    Math elements to calculate
     private BigInteger m;
     private BigInteger e;
@@ -29,9 +26,11 @@ public class RsaBlind {
     private BigInteger gcd;
     private BigInteger one;
 
-    public RsaBlind(RSAPublicKey rsaPublicKey) {
+    public RsaBlind(RSAPrivateKey rsaPrivateKey) {
         this.Rsa = null;
-        this.rsaPublicKey = rsaPublicKey;
+        this.rsaPrivateKey = rsaPrivateKey;
+        this.rsaPublicKey = null;
+
         this.one = new BigInteger("1"); // IMPORTANT TO CHECK ESTATMENT
         this.m = null; //SIZE OF MESSAGE TODO: CODE FOR THIS
         this.e = null; //FROM PUBLIC KEY RSA
@@ -39,8 +38,20 @@ public class RsaBlind {
         this.r = null;
         this.n = null; //MODULE FROM RSA
         this.gcd = null; //
-        System.out.println(this.rsaPublicKey.getAlgorithm());
-        System.out.println(Arrays.toString(this.rsaPublicKey.getEncoded()));
+    }
+
+    public RsaBlind(RSAPublicKey rsaPublicKey) {
+        this.Rsa = null;
+        this.rsaPrivateKey = null;
+        this.rsaPublicKey = rsaPublicKey;
+
+        this.one = new BigInteger("1"); // IMPORTANT TO CHECK ESTATMENT
+        this.m = null; //SIZE OF MESSAGE TODO: CODE FOR THIS
+        this.e = null; //FROM PUBLIC KEY RSA
+        this.d = null; // FROM PRIVATE KEY RSA
+        this.r = null;
+        this.n = null; //MODULE FROM RSA
+        this.gcd = null; //
     }
 
     public RsaBlind(RSA Rsa) {
@@ -53,6 +64,7 @@ public class RsaBlind {
         this.gcd = null; //
         this.Rsa = Rsa;
         this.rsaPublicKey = null;
+        this.rsaPrivateKey = null;
 
     }
 
@@ -63,6 +75,11 @@ public class RsaBlind {
     public byte[] getR() {
         return r.toByteArray();
     }
+
+    public void setR(byte[] r) {
+        this.r = new BigInteger(r);
+    }
+    
 
     public void prepareBlind() {
         if (this.Rsa != null) {
@@ -79,7 +96,12 @@ public class RsaBlind {
                 this.e = this.rsaPublicKey.getPublicExponent();
                 this.n = this.rsaPublicKey.getModulus();
             } else {
-                System.out.println("NO RSA ELEMENTS");
+                if (this.rsaPrivateKey != null) {
+                    this.d = this.rsaPrivateKey.getPrivateExponent();
+                    this.n = this.rsaPrivateKey.getModulus();
+                } else {
+                    System.out.println("NO RSA ELEMENTS");
+                }
             }
         }
     }

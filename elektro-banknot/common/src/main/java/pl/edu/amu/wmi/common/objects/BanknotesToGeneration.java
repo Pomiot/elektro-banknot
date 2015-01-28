@@ -5,7 +5,6 @@ package pl.edu.amu.wmi.common.objects;
  *
  */
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

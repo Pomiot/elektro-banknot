@@ -23,13 +23,14 @@ public class BanknotesGenerator implements Serializable {
     private final List<BanknoteBlinded> banknotesBlindedList = new ArrayList<>();
     private final byte[] customerId;
     private final List<byte[]> randomBlinderBanknotesList = new ArrayList<>();
+    private final List<BanknoteUnblinded> banknotesUnblidedList = new ArrayList<>();
 
     public BanknotesGenerator(byte[] customerId) {
         this.customerId = customerId;
     }
 
     public void banknotesGenerate(String amount) {
-        for (int i = 0; i < 99; i++) {
+        for (int i = 0; i < 100; i++) {
             this.banknotesList.add(new Banknote(amount, this.customerId));
         }
     }
@@ -37,8 +38,7 @@ public class BanknotesGenerator implements Serializable {
     public BanknotesToGeneration getBanknotesBlindedList() {
         return new BanknotesToGeneration(this.banknotesBlindedList);
     }
-    
-    
+
     public byte[] banknoteInBytes() {
         Banknote ban = this.banknotesList.get(0);
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -155,5 +155,26 @@ public class BanknotesGenerator implements Serializable {
                     randomRight,
                     randomRightHash));
         }
+    }
+
+    public UnblindingKeysResponse getUnblindedBanknotes(int numberFromBank) {
+        System.out.println("Klient: Przygotowuje odtajnione banknoty po za " + numberFromBank);
+
+        for (int i = 0; i < this.banknotesList.size(); i++) {
+            if (i != numberFromBank) {
+                this.banknotesUnblidedList.add(new BanknoteUnblinded(
+                        this.banknotesList.get(i).getAmount().getBytes(),
+                        this.banknotesList.get(i).getUniquenessString(),
+                        this.banknotesList.get(i).getLeftIdBanknoteFromIdCustomerRandom1List(), 
+                        this.banknotesList.get(i).getLeftIdBanknoteFromIdCustomerRandom2List(), 
+                        this.banknotesList.get(i).getLeftIdBanknoteFromIdCustomerHashList(), 
+                        this.banknotesList.get(i).getRightIdBanknoteFromIdCustomerRandom1List(), 
+                        this.banknotesList.get(i).getRightIdBanknoteFromIdCustomerRandom2List(), 
+                        this.banknotesList.get(i).getRightIdBanknoteFromIdCustomerHashList()));
+            }
+        }
+        List<byte[]> temp = this.randomBlinderBanknotesList;
+        temp.remove(numberFromBank);
+        return new UnblindingKeysResponse(this.banknotesUnblidedList,temp);
     }
 }

@@ -9,15 +9,19 @@ import pl.edu.amu.wmi.common.objects.UnblindingKeysRequest;
 public class ProcessBanknotesToGeneration {
 
     /**
-     * Klasa otrzymuje od klienta początkową paczkę 100 banknotów i tworzy żądanie
-     * przesłania danych do odciemnienia 99 spośród otrzymanych banknotów.
+     * Klasa otrzymuje od klienta początkową paczkę 100 banknotów i tworzy
+     * żądanie przesłania danych do odciemnienia 99 spośród otrzymanych
+     * banknotów.
      *
      */
-
-    public static UnblindingKeysRequest generateUnblindingKeysRequest(BanknotesToGeneration btg){
-
-        return new UnblindingKeysRequest();
+    public static UnblindingKeysRequest generateUnblindingKeysRequest(BanknotesToGeneration btg) {
+        if (btg.getBlindedBanknotesList().size() == 100) {
+            System.out.println("Otrzymałem banknotów: " + btg.getBlindedBanknotesList().size());
+            return new UnblindingKeysRequest();
+        } else {
+            System.out.println("Zrobiłeś mnie w chuja");
+            return null;
+        }
     }
-
 
 }

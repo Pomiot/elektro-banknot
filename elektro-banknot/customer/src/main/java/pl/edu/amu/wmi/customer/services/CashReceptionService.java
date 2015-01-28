@@ -1,11 +1,9 @@
 package pl.edu.amu.wmi.customer.services;
 
 import com.google.common.base.Preconditions;
-import java.io.Serializable;
 import java.security.interfaces.RSAPublicKey;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-import pl.edu.amu.wmi.common.objects.BanknotesToGeneration;
 import pl.edu.amu.wmi.common.objects.SignedBanknote;
 import pl.edu.amu.wmi.common.objects.UnblindingKeysResponse;
 import pl.edu.amu.wmi.common.objects.UnblindingKeysRequest;
@@ -16,7 +14,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import pl.edu.amu.wmi.common.Util.util;
-import pl.edu.amu.wmi.common.cryptography.RSA;
 import pl.edu.amu.wmi.common.objects.BanknotesGenerator;
 
 /**
@@ -58,6 +55,8 @@ public class CashReceptionService implements MessageListener, ApplicationContext
         this.bankPublicKey = bankPublicKey;
     }
 
+    private BanknotesGenerator banknotesGenerator;
+    
     @Override
     public void onMessage(final Message message) {
         Preconditions.checkArgument(message instanceof ObjectMessage);
@@ -80,7 +79,8 @@ public class CashReceptionService implements MessageListener, ApplicationContext
                     public Message createMessage(Session session) throws JMSException {
 
                         ObjectMessage replyMessage = session.createObjectMessage();
-                        UnblindingKeysResponse unblindingKeysResponse = new UnblindingKeysResponse();
+                        UnblindingKeysResponse unblindingKeysResponse 
+                                = banknotesGenerator.getUnblindedBanknotes(unblindingKeysRequest.getNumber());
 
                         replyMessage.setObject(unblindingKeysResponse);
                         replyMessage.setJMSReplyTo(cashReceptionQueue);
@@ -112,7 +112,7 @@ public class CashReceptionService implements MessageListener, ApplicationContext
         jmsTemplate.send(cashGenerationQueue, new MessageCreator() {
             @Override
             public Message createMessage(Session session) throws JMSException {
-                BanknotesGenerator banknotesGenerator = new BanknotesGenerator(util.generateSecureRandom(16));
+                banknotesGenerator = new BanknotesGenerator(util.generateSecureRandom(16));
                 banknotesGenerator.banknotesGenerate("1000");
 
                 banknotesGenerator.blindBanknotesInBytes((RSAPublicKey)bankPublicKey.getBankPublicKey());

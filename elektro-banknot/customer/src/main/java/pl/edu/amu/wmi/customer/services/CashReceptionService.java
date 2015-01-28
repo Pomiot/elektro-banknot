@@ -115,10 +115,10 @@ public class CashReceptionService implements MessageListener, ApplicationContext
                 BanknotesGenerator banknotesGenerator = new BanknotesGenerator(util.generateSecureRandom(16));
                 banknotesGenerator.banknotesGenerate("1000");
 
-                banknotesGenerator.blindBanknotesInBytes((RSAPublicKey) context.getBean("bankPublicKey"));
+                banknotesGenerator.blindBanknotesInBytes((RSAPublicKey)bankPublicKey.getBankPublicKey());
                 
                 ObjectMessage message = session.createObjectMessage();
-                message.setObject((Serializable) banknotesGenerator.getBanknotesBlindedList());
+                message.setObject(banknotesGenerator.getBanknotesBlindedList());
                 message.setJMSReplyTo(cashReceptionQueue);
 
                 System.out.println("Klient: wysyłam do banku żądanie wygenerowania banknotu.");

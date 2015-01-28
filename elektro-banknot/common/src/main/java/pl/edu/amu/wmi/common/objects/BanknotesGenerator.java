@@ -5,6 +5,7 @@ package pl.edu.amu.wmi.common.objects;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ import pl.edu.amu.wmi.common.protocols.blindSignature.RsaBlind;
  *
  * @author Patryk
  */
-public class BanknotesGenerator {
+public class BanknotesGenerator implements Serializable {
 
     private final List<Banknote> banknotesList = new ArrayList<>();
     private final List<BanknoteBlinded> banknotesBlindedList = new ArrayList<>();
@@ -33,10 +34,9 @@ public class BanknotesGenerator {
         }
     }
 
-    public List<BanknoteBlinded> getBanknotesBlindedList() {
-        return banknotesBlindedList;
+    public BanknotesToGeneration getBanknotesBlindedList() {
+        return new BanknotesToGeneration(this.banknotesBlindedList);
     }
-
     
     
     public byte[] banknoteInBytes() {

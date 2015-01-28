@@ -15,8 +15,6 @@ import pl.edu.amu.wmi.common.objects.UnblindingKeysResponse;
 
 import javax.jms.*;
 import java.security.KeyPair;
-import java.util.ArrayList;
-import pl.edu.amu.wmi.common.objects.BanknoteBlinded;
 
 /**
  * Created by Tomasz on 2015-01-08.
@@ -55,13 +53,12 @@ public class CashGenerationService implements MessageListener, ApplicationContex
              * TODO: bank losuje 99 spośród 100 banknotów i wysyła UnblindingKeyRequest do customera
              */
 
-            if(objectMessage.getObject() instanceof ArrayList<BanknoteBlinded>){
+            if(objectMessage.getObject() instanceof BanknotesToGeneration){
 
                 this.savedBanknotesToGeneration = (BanknotesToGeneration) objectMessage.getObject();
-                System.out.println("TRALALA "+this.savedBanknotesToGeneration.getBanknotesBytesArray().length
-);
+                System.out.println("DUPA: "+this.savedBanknotesToGeneration.getBlindedBanknotesList().get(0).getUniquenessString().length);
                 System.out.println("Bank: otrzymałem od klienta żądanie wystawienia banknotu.");
-
+                
                 Destination replyTo = objectMessage.getJMSReplyTo();
 
                 jmsTemplate.send(replyTo, new MessageCreator() {

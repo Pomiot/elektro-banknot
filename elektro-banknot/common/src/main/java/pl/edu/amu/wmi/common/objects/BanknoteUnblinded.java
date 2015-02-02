@@ -65,5 +65,15 @@ public class BanknoteUnblinded implements Serializable {
     public byte[] getUniquenessString() {
         return uniquenessString;
     }
+
+    public void setLeftIdBanknoteFromIdCustomerRandom2List(List<byte[]> leftIdBanknoteFromIdCustomerRandom2List) {
+        this.leftIdBanknoteFromIdCustomerRandom2List = leftIdBanknoteFromIdCustomerRandom2List;
+    }
+
+    public void setRightIdBanknoteFromIdCustomerRandom2List(List<byte[]> rightIdBanknoteFromIdCustomerRandom2List) {
+        this.rightIdBanknoteFromIdCustomerRandom2List = rightIdBanknoteFromIdCustomerRandom2List;
+    }
+    
+    
     
 }

@@ -1,5 +1,6 @@
 package pl.edu.amu.wmi.customer.services;
 
+import java.util.Arrays;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import pl.edu.amu.wmi.common.objects.Banknote;
@@ -7,20 +8,28 @@ import javax.jms.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import pl.edu.amu.wmi.common.Util.util;
+import pl.edu.amu.wmi.common.objects.BanknotesGenerator;
 
 /**
  * Created by Tomasz on 2015-01-18.
  *
  */
-public class PurchaseFromShopService implements ApplicationContextAware {
+public class PurchaseFromShopService implements ApplicationContextAware {    
+    
+    
+    private JmsTemplate jmsTemplate;
 
-    JmsTemplate jmsTemplate;
+    private Destination purchaseQueue;
 
-    Destination purchaseQueue;
+    private Destination identificationSendingQueue;
 
-    Destination identificationSendingQueue;
+    private ApplicationContext context;
+    
+    private BanknotesGenerator banknotesGenerator;
 
-    ApplicationContext context;
+    public void setBanknotesGenerator(BanknotesGenerator banknotesGenerator) {
+        this.banknotesGenerator = banknotesGenerator;
+    }    
 
     @Override
     public void setApplicationContext(ApplicationContext ac) {
@@ -48,19 +57,7 @@ public class PurchaseFromShopService implements ApplicationContextAware {
 
                 message.setStringProperty("item", "fortepian");
                 //Tymczasowa modyfikacja do testów
-
-                Banknote banknot = new Banknote("1000", util.generateSecureRandom(16));
-//                BanknotesGenerator generator = new BanknotesGenerator(util.generateSecureRandom(16));
-//                generator.banknotesGenerate("1000");
-//                RSA rsa = new RSA();
-//                try {
-//                    rsa.GeneratePairKey();
-//                    generator.blindBanknotesInBytes(rsa.getPublicKey());
-//                } catch (NoSuchAlgorithmException ex) {
-//                    Logger.getLogger(PurchaseFromShopService.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-
-                message.setObject(banknot);
+                message.setObject(banknotesGenerator.getBanknotePairToShop());
 
                 message.setJMSReplyTo(identificationSendingQueue);
 

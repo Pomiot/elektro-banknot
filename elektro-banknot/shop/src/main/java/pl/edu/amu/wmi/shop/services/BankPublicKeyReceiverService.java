@@ -14,7 +14,7 @@ import java.security.PublicKey;
  */
 public class BankPublicKeyReceiverService implements MessageListener {
 
-    PublicKey bankPublicKey;
+    private PublicKey bankPublicKey;
 
     public void setBankPublicKey(PublicKey bankPublicKey) {
         this.bankPublicKey = bankPublicKey;

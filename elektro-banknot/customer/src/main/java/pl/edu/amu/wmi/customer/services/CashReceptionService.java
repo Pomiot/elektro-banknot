@@ -99,8 +99,10 @@ public class CashReceptionService implements MessageListener, ApplicationContext
                  * Klient otrzymuje podpisany banknot TODO: cała reszta
                  */
                 SignedBanknote signedBanknote = (SignedBanknote) objectMessage.getObject();
+                this.banknotesGenerator.setSignedBanknote(signedBanknote);
+                ((PurchaseFromShopService)context.getBean("purchaseFromShopService")).setBanknotesGenerator(this.banknotesGenerator);
                 System.out.println("Podpisany " + Arrays.toString(signedBanknote.getAmount()));
-                System.out.println("Klient: otrzymałem podpisany banknot.");
+                System.out.println("Klient: otrzymałem podpisany banknot.");                
 
             }
 

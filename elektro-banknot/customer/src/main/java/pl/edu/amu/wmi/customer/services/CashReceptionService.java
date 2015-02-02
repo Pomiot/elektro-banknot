@@ -1,21 +1,21 @@
 package pl.edu.amu.wmi.customer.services;
 
 import com.google.common.base.Preconditions;
-import java.security.interfaces.RSAPublicKey;
-import java.util.Arrays;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
-import pl.edu.amu.wmi.common.objects.SignedBanknote;
-import pl.edu.amu.wmi.common.objects.UnblindingKeysResponse;
-import pl.edu.amu.wmi.common.objects.UnblindingKeysRequest;
-import pl.edu.amu.wmi.customer.BankPublicKey;
-
-import javax.jms.*;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import pl.edu.amu.wmi.common.Util.util;
 import pl.edu.amu.wmi.common.objects.BanknotesGenerator;
+import pl.edu.amu.wmi.common.objects.SignedBanknote;
+import pl.edu.amu.wmi.common.objects.UnblindingKeysRequest;
+import pl.edu.amu.wmi.common.objects.UnblindingKeysResponse;
+import pl.edu.amu.wmi.customer.BankPublicKey;
+
+import javax.jms.*;
+import java.security.interfaces.RSAPublicKey;
+import java.util.Arrays;
 
 /**
  * Created by Tomasz on 2015-01-15.
@@ -71,7 +71,7 @@ public class CashReceptionService implements MessageListener, ApplicationContext
                  * Klient otrzymuje żądanie przesłania do banku kluczy
                  * odtajniających dla 99 banknotów TODO: cała reszta
                  */
-                UnblindingKeysRequest unblindingKeysRequest = (UnblindingKeysRequest) objectMessage.getObject();
+                final UnblindingKeysRequest unblindingKeysRequest = (UnblindingKeysRequest) objectMessage.getObject();
 
                 System.out.println("Klient: otrzymałem od banku żądanie przekazania kluczy.");
 

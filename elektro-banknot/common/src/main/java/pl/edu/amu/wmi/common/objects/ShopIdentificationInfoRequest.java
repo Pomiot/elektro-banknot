@@ -8,4 +8,11 @@ import java.io.Serializable;
 public class ShopIdentificationInfoRequest implements Serializable {
 
 
+    public ShopIdentificationInfoRequest(Banknote banknote){
+
+
+        // TODO: wygenerować zapytanie do klienta o zestaw stringów identyfikujących
+
+    }
+
 }

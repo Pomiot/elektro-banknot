@@ -11,16 +11,16 @@ import javax.jms.*;
  */
 public class SendPublicKeyService {
 
-    JmsTemplate jmsTemplate;
+    private JmsTemplate jmsTemplate;
 
-    Destination bankPublicKeyQueueForCustomer;
-    Destination bankPublicKeyQueueForShop;
+    private Destination bankPublicKeyQueueForCustomer;
+    private Destination bankPublicKeyQueueForShop;
 
     public void setKeys(Keys keys) {
         this.keys = keys;
     }
 
-    Keys keys;
+    private Keys keys;
 
     public void setJmsTemplate(JmsTemplate jmsTemplate) {
         this.jmsTemplate = jmsTemplate;

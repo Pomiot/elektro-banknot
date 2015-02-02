@@ -12,8 +12,9 @@ import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
 
 public class Customer {
+
     public static void main(String[] args) throws InterruptedException, IOException, NoSuchAlgorithmException {
-        
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         ApplicationContext context = new ClassPathXmlApplicationContext("Context.xml");
@@ -21,19 +22,19 @@ public class Customer {
         PurchaseFromShopService pfs = (PurchaseFromShopService) context.getBean("purchaseFromShopService");
         BankPublicKeyReceiverService keyReceiverService = (BankPublicKeyReceiverService) context.getBean("bankPublicKeyReceiverService");
 
-
         System.out.println("*** Aplikacja kliencka uruchomiona ***");
         System.out.println("*** Poczekaj na otrzymanie klucza i wciśnij Enter ***");
 
         reader.readLine();
 
-        cgs.generateCash("DUUUUUUUUPA");
-
+        cgs.generateCash("1000");
+        System.out.println("*** Poczekaj na otrzymanie podpisanego banknotu i wciśnij Enter ***");
+        reader.readLine();
         pfs.makePurchase();
-        
+
         //System.out.println("Run customer application");
         //UI ui = new UI();
         //ui.start();
     }
-    
+
 }

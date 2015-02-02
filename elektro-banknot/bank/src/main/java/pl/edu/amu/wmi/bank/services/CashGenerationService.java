@@ -13,7 +13,8 @@ import pl.edu.amu.wmi.common.objects.UnblindingKeysRequest;
 import pl.edu.amu.wmi.common.objects.UnblindingKeysResponse;
 
 import javax.jms.*;
-import java.security.KeyPair;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 
 /**
  * Created by Tomasz on 2015-01-08.
@@ -104,10 +105,13 @@ public class CashGenerationService implements MessageListener, ApplicationContex
                     public Message createMessage(Session session) throws JMSException {
 
                         ObjectMessage replyMessage = session.createObjectMessage();
-
-                        KeyPair kp = ((Keys) context.getBean("keys")).getKeyPair();
+                        Keys kk = (Keys) context.getBean("keys");
                         ProcessUnblindingKeysResponse pukr = new ProcessUnblindingKeysResponse(
-                                savedUnblindingKeysResponse, savedBanknotesToGeneration, kp, savedUnblindingKeysRequest.getNumber());
+                                savedUnblindingKeysResponse, 
+                                savedBanknotesToGeneration, 
+                                (RSAPrivateKey)kk.getPrivateKey(), 
+                                (RSAPublicKey)kk.getPublicKey(), 
+                                savedUnblindingKeysRequest.getNumber());
                         SignedBanknote signedBanknote
                                 = pukr.generateSignedBanknote();
 

@@ -1,24 +1,12 @@
 package pl.edu.amu.wmi.customer.services;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.security.NoSuchAlgorithmException;
-import java.security.interfaces.RSAPublicKey;
-import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import pl.edu.amu.wmi.common.objects.Banknote;
-import pl.edu.amu.wmi.customer.BankPublicKey;
 import javax.jms.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import pl.edu.amu.wmi.common.Util.util;
-import pl.edu.amu.wmi.common.cryptography.RSA;
-import pl.edu.amu.wmi.common.objects.BanknotesGenerator;
-import pl.edu.amu.wmi.common.protocols.blindSignature.RsaBlind;
 
 /**
  * Created by Tomasz on 2015-01-18.

@@ -2,6 +2,7 @@ package pl.edu.amu.wmi.customer.services;
 
 import com.google.common.base.Preconditions;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Arrays;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import pl.edu.amu.wmi.common.objects.SignedBanknote;
@@ -98,7 +99,7 @@ public class CashReceptionService implements MessageListener, ApplicationContext
                  * Klient otrzymuje podpisany banknot TODO: cała reszta
                  */
                 SignedBanknote signedBanknote = (SignedBanknote) objectMessage.getObject();
-
+                System.out.println("Podpisany " + Arrays.toString(signedBanknote.getAmount()));
                 System.out.println("Klient: otrzymałem podpisany banknot.");
 
             }
@@ -113,7 +114,7 @@ public class CashReceptionService implements MessageListener, ApplicationContext
             @Override
             public Message createMessage(Session session) throws JMSException {
                 banknotesGenerator = new BanknotesGenerator(util.generateSecureRandom(16));
-                banknotesGenerator.banknotesGenerate("1000");
+                banknotesGenerator.banknotesGenerate(text);
 
                 banknotesGenerator.blindBanknotesInBytes((RSAPublicKey)bankPublicKey.getBankPublicKey());
                 

@@ -40,6 +40,20 @@ public class RsaBlind {
         this.gcd = null; //
     }
 
+    public RsaBlind(RSAPrivateKey rsaPrivateKey, RSAPublicKey rsaPublicKey) {
+        this.Rsa = null;
+        this.rsaPrivateKey = rsaPrivateKey;
+        this.rsaPublicKey = rsaPublicKey;
+
+        this.one = new BigInteger("1"); // IMPORTANT TO CHECK ESTATMENT
+        this.m = null; //SIZE OF MESSAGE TODO: CODE FOR THIS
+        this.e = null; //FROM PUBLIC KEY RSA
+        this.d = null; // FROM PRIVATE KEY RSA
+        this.r = null;
+        this.n = null; //MODULE FROM RSA
+        this.gcd = null; //
+    }
+
     public RsaBlind(RSAPublicKey rsaPublicKey) {
         this.Rsa = null;
         this.rsaPrivateKey = null;
@@ -79,7 +93,6 @@ public class RsaBlind {
     public void setR(byte[] r) {
         this.r = new BigInteger(r);
     }
-    
 
     public void prepareBlind() {
         if (this.Rsa != null) {
@@ -95,14 +108,12 @@ public class RsaBlind {
             if (this.rsaPublicKey != null) {
                 this.e = this.rsaPublicKey.getPublicExponent();
                 this.n = this.rsaPublicKey.getModulus();
-            } else {
-                if (this.rsaPrivateKey != null) {
-                    this.d = this.rsaPrivateKey.getPrivateExponent();
-                    this.n = this.rsaPrivateKey.getModulus();
-                } else {
-                    System.out.println("NO RSA ELEMENTS");
-                }
             }
+            if (this.rsaPrivateKey != null) {
+                this.d = this.rsaPrivateKey.getPrivateExponent();
+                this.n = this.rsaPrivateKey.getModulus();
+            }
+
         }
     }
 
@@ -138,20 +149,24 @@ public class RsaBlind {
     public byte[] sign(byte[] blindedmessage) {
         BigInteger b = new BigInteger(blindedmessage);
         BigInteger bs = b.modPow(d, n);
-        System.out.println("bs = " + bs);
         return bs.toByteArray();
     }
 
     public byte[] unblind(byte[] blindedmessage) {
         BigInteger bs = new BigInteger(blindedmessage);
+        BigInteger s = this.r.modPow(e.negate(),n).multiply(bs).mod(n);
+        return s.toByteArray();
+    }
+    public byte[] unblindSign(byte[] blindedSign){
+        BigInteger bs = new BigInteger(blindedSign);
         BigInteger s = this.r.modInverse(n).multiply(bs).mod(n);
         return s.toByteArray();
     }
 
-    public void verify(String message, BigInteger unblind) throws UnsupportedEncodingException {
-        byte[] raw = message.getBytes("UTF8");
+    public void verify(byte[] message, byte[] unblind2) throws UnsupportedEncodingException {
+        byte[] raw = message;
         m = new BigInteger(raw);
-
+        BigInteger unblind = new BigInteger(unblind2);
         BigInteger sig_m = m.modPow(d, n);
         System.out.println(sig_m);
 
@@ -161,72 +176,72 @@ public class RsaBlind {
         System.out.println(m.equals(check));
 
     }
-
-    public byte[] blockBlind(byte[] bytes) {
-        int length = this.n.toByteArray().length;
-        byte[] scrambled = new byte[0];
-        byte[] toReturn = new byte[0];
-        byte[] buffer = new byte[length];
-        for (int i = 0; i < bytes.length; i++) {
-            if ((i > 0) && (i % length == 0)) {
-                scrambled = this.blind(buffer);
-
-                toReturn = append(toReturn, scrambled);
-                int newlength = length;
-                if (i + length > bytes.length) {
-                    newlength = bytes.length - i;
-                }
-                buffer = new byte[newlength];
-            }
-            buffer[i % length] = bytes[i];
-        }
-        System.out.println(buffer.length);
-        scrambled = this.blind(buffer);
-
-        toReturn = append(toReturn, scrambled);
-
-        return toReturn;
-    }
-
-    public byte[] blockUnblind(byte[] bytes) {
-        int length = 128;
-        byte[] scrambled = new byte[0];
-        byte[] toReturn = new byte[0];
-        byte[] buffer = new byte[length];
-        for (int i = 0; i < bytes.length; i++) {
-            if ((i > 0) && (i % length == 0)) {
-                do {
-                    scrambled = this.unblind(buffer);
-                    if (scrambled.length > 128) {
-                        this.prepareBlind();
-                    }
-                } while (!(scrambled.length == 128));
-
-                toReturn = append(toReturn, scrambled);
-                int newlength = length;
-                if (i + length > bytes.length) {
-                    newlength = bytes.length - i;
-                }
-                buffer = new byte[newlength];
-            }
-            buffer[i % length] = bytes[i];
-        }
-
-        scrambled = this.unblind(buffer);
-
-        toReturn = append(toReturn, scrambled);
-
-        return toReturn;
-    }
-
-    private byte[] append(byte[] prefix, byte[] suffix) {
-        byte[] toReturn = new byte[prefix.length + suffix.length];
-        for (int i = 0; i < prefix.length; i++) {
-            toReturn[i] = prefix[i];
-        }
-        for (int i = 0; i < suffix.length; i++) {
-            toReturn[i + prefix.length] = suffix[i];
-        }
-        return toReturn;
-    }
+//
+//    public byte[] blockBlind(byte[] bytes) {
+//        int length = this.n.toByteArray().length;
+//        byte[] scrambled = new byte[0];
+//        byte[] toReturn = new byte[0];
+//        byte[] buffer = new byte[length];
+//        for (int i = 0; i < bytes.length; i++) {
+//            if ((i > 0) && (i % length == 0)) {
+//                scrambled = this.blind(buffer);
+//
+//                toReturn = append(toReturn, scrambled);
+//                int newlength = length;
+//                if (i + length > bytes.length) {
+//                    newlength = bytes.length - i;
+//                }
+//                buffer = new byte[newlength];
+//            }
+//            buffer[i % length] = bytes[i];
+//        }
+//        System.out.println(buffer.length);
+//        scrambled = this.blind(buffer);
+//
+//        toReturn = append(toReturn, scrambled);
+//
+//        return toReturn;
+//    }
+//
+//    public byte[] blockUnblind(byte[] bytes) {
+//        int length = 128;
+//        byte[] scrambled = new byte[0];
+//        byte[] toReturn = new byte[0];
+//        byte[] buffer = new byte[length];
+//        for (int i = 0; i < bytes.length; i++) {
+//            if ((i > 0) && (i % length == 0)) {
+//                do {
+//                    scrambled = this.unblind(buffer);
+//                    if (scrambled.length > 128) {
+//                        this.prepareBlind();
+//                    }
+//                } while (!(scrambled.length == 128));
+//
+//                toReturn = append(toReturn, scrambled);
+//                int newlength = length;
+//                if (i + length > bytes.length) {
+//                    newlength = bytes.length - i;
+//                }
+//                buffer = new byte[newlength];
+//            }
+//            buffer[i % length] = bytes[i];
+//        }
+//
+//        scrambled = this.unblind(buffer);
+//
+//        toReturn = append(toReturn, scrambled);
+//
+//        return toReturn;
+//    }
+//
+//    private byte[] append(byte[] prefix, byte[] suffix) {
+//        byte[] toReturn = new byte[prefix.length + suffix.length];
+//        for (int i = 0; i < prefix.length; i++) {
+//            toReturn[i] = prefix[i];
+//        }
+//        for (int i = 0; i < suffix.length; i++) {
+//            toReturn[i + prefix.length] = suffix[i];
+//        }
+//        return toReturn;
+//    }
 }

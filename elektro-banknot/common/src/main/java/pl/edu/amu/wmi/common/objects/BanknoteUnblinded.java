@@ -61,5 +61,9 @@ public class BanknoteUnblinded implements Serializable {
     public List<byte[]> getRightIdBanknoteFromIdCustomerRandom2List() {
         return rightIdBanknoteFromIdCustomerRandom2List;
     }
+
+    public byte[] getUniquenessString() {
+        return uniquenessString;
+    }
     
 }

@@ -6,6 +6,7 @@ package pl.edu.amu.wmi.common.objects;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
@@ -147,13 +148,17 @@ public class BanknotesGenerator implements Serializable {
                 randomRightHash.add(rsaBlind.blind(rightID));
             }
 
-            this.banknotesBlindedList.add(new BanknoteBlinded(
-                    rsaBlind.blind(banknot.getAmount().getBytes()),
-                    rsaBlind.blind(banknot.getUniquenessString()),
-                    randomLeft,
-                    randomLeftHash,
-                    randomRight,
-                    randomRightHash));
+            try {
+                this.banknotesBlindedList.add(new BanknoteBlinded(
+                        rsaBlind.blind(banknot.getAmount().getBytes("UTF8")),
+                        rsaBlind.blind(banknot.getUniquenessString()),
+                        randomLeft,
+                        randomLeftHash,
+                        randomRight,
+                        randomRightHash));
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(BanknotesGenerator.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

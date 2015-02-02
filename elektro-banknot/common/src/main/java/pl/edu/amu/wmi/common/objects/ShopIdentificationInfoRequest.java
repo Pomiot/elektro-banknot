@@ -7,9 +7,11 @@ import java.io.Serializable;
  */
 public class ShopIdentificationInfoRequest implements Serializable {
 
+    BanknotePairToShop banknotePairToShop;
 
-    public ShopIdentificationInfoRequest(Banknote banknote){
+    public ShopIdentificationInfoRequest(BanknotePairToShop banknotePairToShop){
 
+        this.banknotePairToShop = banknotePairToShop;
 
         // TODO: wygenerować zapytanie do klienta o zestaw stringów identyfikujących
 

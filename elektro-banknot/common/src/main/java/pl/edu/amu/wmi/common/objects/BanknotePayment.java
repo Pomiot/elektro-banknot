@@ -9,12 +9,12 @@ import java.io.Serializable;
 public class BanknotePayment implements Serializable {
 
     private ShopIdentificationInfoResponse shopIdentificationInfoResponse;
-    private Banknote savedBanknote;
+    private BanknotePairToShop banknotePairToShop;
 
-    public BanknotePayment(ShopIdentificationInfoResponse shopIdentificationInfoResponse, Banknote savedBanknote) {
+    public BanknotePayment(ShopIdentificationInfoResponse shopIdentificationInfoResponse, BanknotePairToShop banknotePairToShop) {
 
         this.shopIdentificationInfoResponse = shopIdentificationInfoResponse;
-        this.savedBanknote = savedBanknote;
+        this.banknotePairToShop = banknotePairToShop;
 
         // TODO: dodać podpisany banknot i zestaw identyfikujących stringów od klienta. Cały ten obiekt idzie do banku
 

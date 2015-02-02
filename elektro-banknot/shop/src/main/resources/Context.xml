@@ -22,6 +22,7 @@
     <bean id="purchaseService" class="pl.edu.amu.wmi.shop.services.PurchaseService">
         <property name="jmsTemplate" ref="jmsTemplate"/>
         <property name="purchaseQueue" ref="purchaseQueue"/>
+        <property name="bankPaymentQueue" ref="bankPaymentQueue"/>
     </bean>
 
     <bean id="messageListenerContainer" class="org.springframework.jms.listener.SimpleMessageListenerContainer">
@@ -37,6 +38,10 @@
         <constructor-arg value="bankPublicKeyQueueForShop"/>
     </bean>
 
+    <bean id="bankPaymentQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="bankPaymentQueue"/>
+    </bean>
+
     <bean id="messageListenerContainer2" class="org.springframework.jms.listener.SimpleMessageListenerContainer">
         <property name="messageListener" ref="bankPublicKeyReceiverService"/>
         <property name="connectionFactory" ref="connectionFactory"/>
@@ -44,7 +49,6 @@
     </bean>
 
     <bean id="bankPublicKeyReceiverService" class="pl.edu.amu.wmi.shop.services.BankPublicKeyReceiverService">
-
     </bean>
 
 </beans>

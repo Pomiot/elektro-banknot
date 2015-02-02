@@ -38,6 +38,19 @@
         <constructor-arg value="bankPublicKeyQueueForCustomer"/>
     </bean>
 
+    <bean id="bankPaymentQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="bankPaymentQueue"/>
+    </bean>
+
+    <bean id="gettingCashFromShopService" class="pl.edu.amu.wmi.bank.services.GettingCashFromShopService">
+    </bean>
+
+    <bean id="messageListenerContainer2" class="org.springframework.jms.listener.SimpleMessageListenerContainer">
+        <property name="messageListener" ref="gettingCashFromShopService"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="destination" ref="bankPaymentQueue"/>
+    </bean>
+
     <bean id="sendPublicKeyToShopService" class="pl.edu.amu.wmi.bank.services.SendPublicKeyService">
         <property name="keys" ref="keys"/>
         <property name="jmsTemplate" ref="jmsTemplate"/>
@@ -52,5 +65,6 @@
     <!-- operacje generacji banknotu -->
 
     <bean id="keys" class="pl.edu.amu.wmi.bank.Keys"/>
+
 
 </beans>

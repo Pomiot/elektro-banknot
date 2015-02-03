@@ -1,5 +1,7 @@
 package pl.edu.amu.wmi.bank.billing;
 
+import java.util.List;
+
 /**
  * Created by Tomasz on 2015-01-21.
  */
@@ -7,6 +9,24 @@ public class Accounts {
 
     private double customerBalance = 10000;
     private double shopBalance = 10000;
+
+    public static List<byte[]> uniquenessStrings;
+
+    public void setCustomerBalance(double customerBalance) {
+        this.customerBalance = customerBalance;
+    }
+
+    public void setShopBalance(double shopBalance) {
+        this.shopBalance = shopBalance;
+    }
+
+    public List<byte[]> getUniquenessStrings() {
+        return uniquenessStrings;
+    }
+
+    public void setUniquenessStrings(List<byte[]> uniquenessStrings) {
+        this.uniquenessStrings = uniquenessStrings;
+    }
 
     public Double getCustomerBalance(){
         return this.customerBalance;

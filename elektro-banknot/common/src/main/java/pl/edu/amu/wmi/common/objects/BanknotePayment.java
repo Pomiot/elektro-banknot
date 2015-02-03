@@ -8,8 +8,8 @@ import java.io.Serializable;
 
 public class BanknotePayment implements Serializable {
 
-    private ShopIdentificationInfoResponse shopIdentificationInfoResponse;
-    private BanknotePairToShop banknotePairToShop;
+    public ShopIdentificationInfoResponse shopIdentificationInfoResponse;
+    public BanknotePairToShop banknotePairToShop;
 
     public BanknotePayment(ShopIdentificationInfoResponse shopIdentificationInfoResponse, BanknotePairToShop banknotePairToShop) {
 

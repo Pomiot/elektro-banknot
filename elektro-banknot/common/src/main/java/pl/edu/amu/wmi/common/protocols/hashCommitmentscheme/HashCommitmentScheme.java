@@ -20,6 +20,20 @@ public class HashCommitmentScheme implements HashCommitmentSchemeIface {
     private byte[] decision;
     private byte[] hash;
 
+    public void setDecision(byte[] decision) {
+        this.decision = decision;
+    }
+
+    public void setRandom1(byte[] random1) {
+        this.random1 = random1;
+    }
+
+    public void setRandom2(byte[] random2) {
+        this.random2 = random2;
+    }
+
+    
+    
     public byte[] getRandom1() {
         return random1;
     }
@@ -31,6 +45,15 @@ public class HashCommitmentScheme implements HashCommitmentSchemeIface {
     public byte[] getRandom2() {
         return random2;
     }
+
+    public HashCommitmentScheme(byte[] random1, byte[] random2, byte[] decision) {
+        this.random1 = random1;
+        this.random2 = random2;
+        this.decision = decision;
+        this.hash = null;
+    }
+    
+    
     
     //Konstruktor do tworzenia zobowiazania
     public HashCommitmentScheme(byte[] bytesDecision) {
@@ -50,13 +73,25 @@ public class HashCommitmentScheme implements HashCommitmentSchemeIface {
         this.random2 = util.generateSecureRandom(SIZE_OF_RANDOM);
     }
 
-    private byte[] generateHash() {
+    public byte[] generateHash() {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA1");
             md.update(this.random1);
             md.update(this.random2);
             md.update(this.decision);
-            return md.digest();
+            byte[] result = md.digest();
+            int test =(int)result[0];
+            if (test == -128){
+                test= 127;
+            }
+            if (test ==0){
+                test=1;
+            }
+            if (test<0){
+                test = Math.abs(test);
+            }
+            result[0] = (byte) test;
+            return result;
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(HashCommitmentScheme.class.getName()).log(Level.SEVERE, null, ex);
         }

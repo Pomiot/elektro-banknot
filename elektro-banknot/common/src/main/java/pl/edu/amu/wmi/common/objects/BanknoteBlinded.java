@@ -28,11 +28,12 @@ public class BanknoteBlinded implements Serializable{
         this.leftIdBanknoteFromIdCustomerHashList = leftIdBanknoteFromIdCustomerHashList;
         this.rightIdBanknoteFromIdCustomerRandom1List = rightIdBanknoteFromIdCustomerRandom1List;
         this.rightIdBanknoteFromIdCustomerHashList = rightIdBanknoteFromIdCustomerHashList;
-        this.show();
+//        this.show();
     }
 
     private void show(){
         System.out.println("Amount "+this.amount.length);
+        System.out.println("ID "+this.uniquenessString.length);
         System.out.println("LeftID "+this.leftIdBanknoteFromIdCustomerRandom1List.get(0).length);
     }
 

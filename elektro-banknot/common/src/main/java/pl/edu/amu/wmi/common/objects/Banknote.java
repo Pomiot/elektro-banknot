@@ -8,14 +8,17 @@ package pl.edu.amu.wmi.common.objects;
  */
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pl.edu.amu.wmi.common.Util.util;
+import pl.edu.amu.wmi.common.protocols.blindSignature.RsaBlind;
 import pl.edu.amu.wmi.common.protocols.hashCommitmentscheme.HashCommitmentScheme;
 import pl.edu.amu.wmi.common.protocols.secretSharing.secretSharing;
 
@@ -23,7 +26,7 @@ import pl.edu.amu.wmi.common.protocols.secretSharing.secretSharing;
  * Created by Tomasz on 2015-01-15. Modification by Patryk on 2015-01-19
  *
  */
-public class Banknote implements Serializable,BanknoteIface {
+public class Banknote implements Serializable, BanknoteIface {
 
     private String amount;
     private byte[] uniquenessString;
@@ -81,7 +84,7 @@ public class Banknote implements Serializable,BanknoteIface {
     public List<byte[]> getRightIdBanknoteFromIdCustomerRandom2List() {
         return rightIdBanknoteFromIdCustomerRandom2List;
     }
-    
+
     public void setAmount(String value) {
         this.amount = value;
     }
@@ -92,7 +95,22 @@ public class Banknote implements Serializable,BanknoteIface {
 
     //Generuje identyfikator banknotu
     private void generateUniquenessString() {
-        this.uniquenessString = util.generateSecureRandom(lengthUniquenessString);
+
+        try {
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
+            BigInteger r;
+            BigInteger one = new BigInteger("1");
+            BigInteger gcd;
+            byte[] randomBytes = new byte[lengthUniquenessString];
+            do {
+                random.nextBytes(randomBytes);
+                r = new BigInteger(randomBytes);
+            } while (r.compareTo(one) <= 0);
+            this.uniquenessString =r.toByteArray();
+        } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
+            Logger.getLogger(RsaBlind.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 
     //Funkcja generująca pojedynczy identyfikator banknotu

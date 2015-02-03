@@ -12,6 +12,8 @@ import java.util.List;
 import pl.edu.amu.wmi.common.objects.BanknoteBlinded;
 import pl.edu.amu.wmi.common.objects.BanknoteUnblinded;
 import pl.edu.amu.wmi.common.protocols.blindSignature.RsaBlind;
+import pl.edu.amu.wmi.common.protocols.hashCommitmentscheme.HashCommitmentScheme;
+import pl.edu.amu.wmi.common.protocols.secretSharing.secretSharing;
 
 /**
  * Created by Tomasz on 2015-01-21.
@@ -51,14 +53,23 @@ public class ProcessUnblindingKeysResponse {
         System.out.println("Bank: Banknot ślepo podpisywany nr: " + this.number);
         this.takeBanknoteToSign();
         this.unblindBanknotes();
+        System.out.println("Bank: Rozpoczynam sprawdzanie poprawoności banknotowów");
         if (this.checkSize()) {
-            System.out.println("Bank: Rozpoczynam sprawdzanie poprawoności banknotowów");
-            System.out.println(this.checkAmount());
-            System.out.println(this.checkUniquenessString());
+            if (this.checkAmount() && this.checkUniquenessString()
+                    && this.checkLeftRandom1() && this.checkLeftHash()
+                    && this.checkRightRandom1()) {
+                if (this.checkRightHash() && this.checkGenerateLeftHash()
+                        && this.checkGenerateRightHash() & this.checkCorrectId()) {
+                    return this.prepareSignedBanknote();
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
-        return this.prepareSignedBanknote();
     }
 
     private void takeBanknoteToSign() {
@@ -88,6 +99,7 @@ public class ProcessUnblindingKeysResponse {
             for (byte[] bytes : bb.getRightIdBanknoteFromIdCustomerHashList()) {
                 bbRightHash.add(this.rsaBlind.unblind(bytes));
             }
+//            System.out.println("DUPSKO: " + Arrays.toString(this.rsaBlind.unblind(bb.getUniquenessString())));
             this.bu.add(new BanknoteUnblinded(
                     this.rsaBlind.unblind(bb.getAmount()),
                     this.rsaBlind.unblind(bb.getUniquenessString()),
@@ -95,8 +107,8 @@ public class ProcessUnblindingKeysResponse {
                     null,
                     bbLeftIdHash,
                     bbRightRandom,
-                    bbRightHash,
-                    null));
+                    null,
+                    bbRightHash));
 
         }
     }
@@ -122,12 +134,39 @@ public class ProcessUnblindingKeysResponse {
     private boolean checkUniquenessString() {
         for (int i = 0; i < this.bu.size(); i++) {
             if (!Arrays.equals(this.bu.get(i).getUniquenessString(), this.ukr.getBanknoteUnblidedList().get(i).getUniquenessString())) {
+//                System.out.println(Arrays.toString(this.bu.get(i).getUniquenessString()));
+//                System.out.println(Arrays.toString(this.ukr.getBanknoteUnblidedList().get(i).getUniquenessString()));
+//                System.out.println(i+" 1");
                 return false;
             }
         }
         for (int i = 0; i < this.bu.size(); i++) {
             for (int j = 0; j < this.bu.size(); j++) {
-                if ((i != j) && (!Arrays.equals(this.bu.get(i).getUniquenessString(), this.bu.get(j).getUniquenessString()))) {
+                if (i != j) {
+                    if (Arrays.equals(this.bu.get(i).getUniquenessString(), this.bu.get(j).getUniquenessString())) {
+                        {
+//                            System.out.println(Arrays.toString(this.bu.get(i).getUniquenessString()));
+//                            System.out.println(Arrays.toString(this.bu.get(j).getUniquenessString()));
+//                            System.out.println(i + " " + j + " 2");
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private boolean checkLeftRandom1() {
+
+        for (int i = 0; i < this.bu.size(); i++) {
+            List<byte[]> bu1 = this.bu.get(i).getLeftIdBanknoteFromIdCustomerRandom1List();
+            List<byte[]> ukr1 = this.ukr.getBanknoteUnblidedList().get(i).getLeftIdBanknoteFromIdCustomerRandom1List();
+            for (int j = 0; j < bu1.size(); j++) {
+                if (!Arrays.equals(bu1.get(j), ukr1.get(j))) {
+                    System.out.println(Arrays.toString(bu1.get(j)));
+                    System.out.println(Arrays.toString(ukr1.get(j)));
                     return false;
                 }
             }
@@ -135,6 +174,111 @@ public class ProcessUnblindingKeysResponse {
         return true;
     }
 
+    private boolean checkLeftHash() {
+        for (int i = 0; i < this.bu.size(); i++) {
+            List<byte[]> bu1 = this.bu.get(i).getLeftIdBanknoteFromIdCustomerHashList();
+            List<byte[]> ukr1 = this.ukr.getBanknoteUnblidedList().get(i).getLeftIdBanknoteFromIdCustomerHashList();
+            for (int j = 0; j < bu1.size(); j++) {
+//                    System.out.println(Arrays.toString(bu1.get(j)));
+//                    System.out.println(Arrays.toString(ukr1.get(j)));
+                if (!Arrays.equals(bu1.get(j), ukr1.get(j))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean checkRightRandom1() {
+        for (int i = 0; i < this.bu.size(); i++) {
+            List<byte[]> bu1 = this.bu.get(i).getRightIdBanknoteFromIdCustomerRandom1List();
+            List<byte[]> ukr1 = this.ukr.getBanknoteUnblidedList().get(i).getRightIdBanknoteFromIdCustomerRandom1List();
+            for (int j = 0; j < bu1.size(); j++) {
+                if (!Arrays.equals(bu1.get(j), ukr1.get(j))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean checkRightHash() {
+        for (int i = 0; i < this.bu.size(); i++) {
+            List<byte[]> bu1 = this.bu.get(i).getRightIdBanknoteFromIdCustomerHashList();
+            List<byte[]> ukr1 = this.ukr.getBanknoteUnblidedList().get(i).getRightIdBanknoteFromIdCustomerHashList();
+            for (int j = 0; j < bu1.size(); j++) {
+                if (!Arrays.equals(bu1.get(j), ukr1.get(j))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean checkGenerateLeftHash() {
+
+        for (int i = 0; i < this.bu.size(); i++) {
+            List<byte[]> random1 = this.ukr.getBanknoteUnblidedList().get(i).getLeftIdBanknoteFromIdCustomerRandom1List();
+            List<byte[]> random2 = this.ukr.getBanknoteUnblidedList().get(i).getLeftIdBanknoteFromIdCustomerRandom2List();
+            List<byte[]> decision = this.ukr.getBanknoteUnblidedList().get(i).getLeftIdBanknoteFromIdCustomerList();
+
+            for (int j = 0; j < decision.size(); j++) {
+                HashCommitmentScheme hash = new HashCommitmentScheme(
+                        random1.get(j),
+                        random2.get(j),
+                        decision.get(j));
+                byte[] result = hash.generateHash();
+                if (!Arrays.equals(result, this.bu.get(i).getLeftIdBanknoteFromIdCustomerHashList().get(j))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean checkGenerateRightHash() {
+
+        for (int i = 0; i < this.bu.size(); i++) {
+            List<byte[]> random1 = this.ukr.getBanknoteUnblidedList().get(i).getRightIdBanknoteFromIdCustomerRandom1List();
+            List<byte[]> random2 = this.ukr.getBanknoteUnblidedList().get(i).getRightIdBanknoteFromIdCustomerRandom2List();
+            List<byte[]> decision = this.ukr.getBanknoteUnblidedList().get(i).getRightIdBanknoteFromIdCustomerList();
+
+            for (int j = 0; j < decision.size(); j++) {
+                HashCommitmentScheme hash = new HashCommitmentScheme(
+                        random1.get(j),
+                        random2.get(j),
+                        decision.get(j));
+                byte[] result = hash.generateHash();
+                if (!Arrays.equals(result, this.bu.get(i).getRightIdBanknoteFromIdCustomerHashList().get(j))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean checkCorrectId(){
+        List<byte[]> id = new ArrayList<>();
+        secretSharing secret = new secretSharing();
+        for (int i=0;i<this.bu.size();i++){
+            List<byte[]> left1 = this.ukr.getBanknoteUnblidedList().get(i).getLeftIdBanknoteFromIdCustomerList();
+            List<byte[]> right1 = this.ukr.getBanknoteUnblidedList().get(i).getRightIdBanknoteFromIdCustomerList();
+            
+            for (int j=0;j<left1.size();j++){
+                secret.setRandom1(left1.get(j));
+                secret.setResult(right1.get(j));
+                secret.generateMessage();
+                id.add(secret.getByteMessage());
+            }
+        }
+        for (int i=0;i<id.size()-1;i++){
+            if (!Arrays.equals(id.get(i), id.get(i+1))){
+                return false;
+            }
+        }
+        return true;
+    }
+    
     private SignedBanknote prepareSignedBanknote() {
         List<byte[]> leftRandom = new ArrayList<>();
         for (byte[] bb : this.banknoteBlinded.getLeftIdBanknoteFromIdCustomerRandom1List()) {

@@ -1,7 +1,14 @@
 package pl.edu.amu.wmi.common.Util;
 
+import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static pl.edu.amu.wmi.common.objects.BanknoteIface.lengthUniquenessString;
+import pl.edu.amu.wmi.common.protocols.blindSignature.RsaBlind;
 
 public class util {
 
@@ -28,11 +35,33 @@ public class util {
         }
         return data;
     }
+
     //Metoda generująca random określonej długości
-    public static byte[] generateSecureRandom(int size){
-        Random random = new SecureRandom();
-        byte[] aesKey = new byte[size];
-        random.nextBytes(aesKey);
-        return aesKey;       
+
+    public static byte[] generateSecureRandom(int size) {
+        try {
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
+            BigInteger r;
+            BigInteger one = new BigInteger("1");
+            BigInteger gcd;
+            byte[] randomBytes = new byte[size];
+            do {
+                random.nextBytes(randomBytes);
+                r = new BigInteger(randomBytes);
+            } while (r.compareTo(one) <= 0);
+            return r.toByteArray();
+        } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
+            Logger.getLogger(RsaBlind.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+//        try {
+//            SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
+//            byte[] aesKey = new byte[size];
+//            random.nextBytes(aesKey);       
+//            return aesKey;
+//        } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
+//            Logger.getLogger(util.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+        return null;
     }
 }

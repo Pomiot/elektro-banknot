@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -151,7 +152,10 @@ public class BanknotesGenerator implements Serializable {
             for (byte[] rightID : banknot.getRightIdBanknoteFromIdCustomerHashList()) {
                 randomRightHash.add(rsaBlind.blind(rightID));
             }
-
+//            System.out.println(Arrays.toString(banknot.getUniquenessString()));
+//            byte[] test = rsaBlind.blind(banknot.getUniquenessString());
+//            byte[] test2 = rsaBlind.unblind(test);
+//            System.out.println(Arrays.toString(test2));
             try {
                 this.banknotesBlindedList.add(new BanknoteBlinded(
                         rsaBlind.blind(banknot.getAmount().getBytes("UTF8")),
@@ -175,6 +179,8 @@ public class BanknotesGenerator implements Serializable {
                 this.banknotesUnblidedList.add(new BanknoteUnblinded(
                         this.banknotesList.get(i).getAmount().getBytes(),
                         this.banknotesList.get(i).getUniquenessString(),
+                        this.banknotesList.get(i).getLeftIdBanknoteFromIdCustomerList(),
+                        this.banknotesList.get(i).getRightIdBanknoteFromIdCustomerList(),
                         this.banknotesList.get(i).getLeftIdBanknoteFromIdCustomerRandom1List(),
                         this.banknotesList.get(i).getLeftIdBanknoteFromIdCustomerRandom2List(),
                         this.banknotesList.get(i).getLeftIdBanknoteFromIdCustomerHashList(),

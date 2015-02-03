@@ -120,13 +120,14 @@ public class RsaBlind {
     public void generateNewRandom() {
         try {
             SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
+
             byte[] randomBytes = new byte[this.n.toByteArray().length];
             do {
                 random.nextBytes(randomBytes);
                 this.r = new BigInteger(randomBytes);
                 gcd = this.r.gcd(n);
             } while (!gcd.equals(one) || this.r.compareTo(n) >= 0 || this.r.compareTo(one) <= 0);
-            System.out.println("random size" + this.r.toByteArray().length);
+//            System.out.println("random size" + Arrays.toString(this.r.toByteArray()));
         } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
             Logger.getLogger(RsaBlind.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -154,10 +155,11 @@ public class RsaBlind {
 
     public byte[] unblind(byte[] blindedmessage) {
         BigInteger bs = new BigInteger(blindedmessage);
-        BigInteger s = this.r.modPow(e.negate(),n).multiply(bs).mod(n);
+        BigInteger s = this.r.modPow(e.negate(), n).multiply(bs).mod(n);
         return s.toByteArray();
     }
-    public byte[] unblindSign(byte[] blindedSign){
+
+    public byte[] unblindSign(byte[] blindedSign) {
         BigInteger bs = new BigInteger(blindedSign);
         BigInteger s = this.r.modInverse(n).multiply(bs).mod(n);
         return s.toByteArray();

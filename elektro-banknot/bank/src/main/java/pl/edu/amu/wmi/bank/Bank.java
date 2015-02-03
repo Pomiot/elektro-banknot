@@ -10,11 +10,17 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import pl.edu.amu.wmi.bank.billing.Accounts;
 import pl.edu.amu.wmi.bank.services.SendPublicKeyService;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 /**
  * @author Patryk
  */
 public class Bank {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         ApplicationContext context = new ClassPathXmlApplicationContext("Context.xml");
 
@@ -25,6 +31,12 @@ public class Bank {
         Accounts accounts = (Accounts) context.getBean("accounts");
 
         System.out.println(accounts);
+
+        while(true){
+            System.out.println("Wcisnij cokolwiek zeby ponownie wyslac klucz");
+            reader.readLine();
+            keySender.sendPublicKey();
+        }
 
     }
 }

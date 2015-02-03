@@ -1,5 +1,6 @@
 package pl.edu.amu.wmi.bank.billing;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,7 +11,7 @@ public class Accounts {
     private double customerBalance = 10000;
     private double shopBalance = 10000;
 
-    public static List<byte[]> uniquenessStrings;
+    public static List<byte[]> uniquenessStrings = new ArrayList<>();
 
     public void setCustomerBalance(double customerBalance) {
         this.customerBalance = customerBalance;

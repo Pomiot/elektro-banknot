@@ -35,6 +35,8 @@ public class GettingCashFromShopService implements MessageListener
         try {
             BanknotePayment banknotePayment = (BanknotePayment) objectMessage.getObject();
 
+            System.out.println(banknotePayment.banknotePairToShop.getBanknoteUnblinded().getUniquenessString().toString());
+
             if(Accounts.uniquenessStrings.indexOf(banknotePayment.banknotePairToShop.getBanknoteUnblinded().getUniquenessString()) < 0){
                 Accounts.uniquenessStrings.add(banknotePayment.banknotePairToShop.getBanknoteUnblinded().getUniquenessString());
                 System.out.println("Wszystko wyglada si, dodaje ID banknotu do listy uzytych.");
